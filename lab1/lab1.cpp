@@ -71,37 +71,33 @@ void readAndReverse(){
 	char textChar[256];
 	wchar_t textWchar_t[256];
 	FILE *fChar = fopen(path, "r");// открытие файла
-	FILE *fWchar_t = fopen(path, "r");
 	FILE *w = fopen("resFile.txt", "w");
-	while (!feof(fChar)){
-		//
-		fgets(textChar, 255, fChar);
-		printf("%s", textChar);
-		if (IsTextUnicode(textChar, sizeof(textChar), NULL)){
-			printf(" IS UNICODE!!!!");
-			MultiByteToWideChar(CP_ACP, 0, textChar, sizeof(textChar), textWchar_t, sizeof(textWchar_t));
-			myReverse(textWchar_t);
-			_fputts(textWchar_t, w);
-		}
-		else{
+	fgets(textChar, 255, fChar);
+	int t = IS_TEXT_UNICODE_UNICODE_MASK;
+	if (!IsTextUnicode(textChar, sizeof(textChar), &t)){
+		
+		while (!feof(fChar)){
+			printf("%s", textChar);
+			//MultiByteToWideChar(CP_ACP, 0, textChar, sizeof(textChar), textWchar_t, sizeof(textWchar_t));
 			myReverse(textChar);
 			fputs(textChar, w);
 		}
-		//
 	}
-	printf("\n\n");
-	while (!feof(fWchar_t)){
-		fgetws(textWchar_t, 255, fWchar_t);
-		wprintf(L"%s", textWchar_t);
-		myReverse(textWchar_t);
-		//fputws(textWchar_t, w);
+	else{
+		FILE *fWchar_t = fopen(path, "r");
+		while (!feof(fWchar_t)){
+			fgetws(textWchar_t, 255, fWchar_t);
+			wprintf(L"%s", textWchar_t);
+			myReverse(textWchar_t);
+			fputws(textWchar_t, w);
+		}
+		fclose(fWchar_t);
+		//fgets(text, 256, my_file); //считываем строку разимером максимум
+		// 100 символов из файла
+		//puts(text); // вывод (необязательно)
+		fclose(fChar);
+		fclose(w);
 	}
-	//fgets(text, 256, my_file); //считываем строку разимером максимум
-	// 100 символов из файла
-	//puts(text); // вывод (необязательно)
-	fclose(fChar);
-	fclose(fWchar_t);
-	fclose(w);
 }
 
 void myReverse(char* text){
