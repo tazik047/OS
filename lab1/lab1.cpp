@@ -23,6 +23,23 @@ int compare(const void* e1, const void* e2) {
 	return _tcscmp(s1, s2);
 }
 
+template<typename T>
+void reverse(T* text){
+	int len;
+	if (sizeof(T) == sizeof(char))
+		len = strlen((char*)text) - 1;
+	else
+		len = wcslen((wchar_t*)text) - 1;
+	if (text[len] == '\n'){
+		len--;
+	}
+	for (int i = 0; i < len / 2 +1; i++){
+		T temp = text[i];
+		text[i] = text[len - i];
+		text[len - i] = temp;
+	}
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	_tsetlocale(LC_ALL, _T("Russian")); // русский в консоли.
@@ -79,7 +96,7 @@ void readAndReverse(){
 		while (!feof(fChar)){
 			printf("%s", textChar);
 			//MultiByteToWideChar(CP_ACP, 0, textChar, sizeof(textChar), textWchar_t, sizeof(textWchar_t));
-			myReverse(textChar);
+			reverse(textChar);
 			fputs(textChar, w);
 		}
 	}
@@ -88,7 +105,7 @@ void readAndReverse(){
 		while (!feof(fWchar_t)){
 			fgetws(textWchar_t, 255, fWchar_t);
 			wprintf(L"%s", textWchar_t);
-			myReverse(textWchar_t);
+			reverse(textWchar_t);
 			fputws(textWchar_t, w);
 		}
 		fclose(fWchar_t);
