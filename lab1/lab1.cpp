@@ -66,7 +66,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 
 void readAndReverse(){
-	char path[] = "file_unicode.txt";
+	char path[] = "file.txt";
 	_tprintf(_T("\n11 задание:\n"));
 	char textChar[256];
 	wchar_t textWchar_t[256];
