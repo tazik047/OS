@@ -88,61 +88,30 @@ void readAndReverse(){
 
 	char path[] = "file_unicode.txt";
 	_tprintf(_T("\n11 задание:\n"));
-	char textChar[256];
-	FILE *file = fopen(path, "r");// открытие файла
-	FILE *w = fopen("resFile.txt", "w");
+	FILE *file = nullptr;
+	FILE *w = nullptr;
 	int bom[2];
 	ifstream f(path, ios_base::binary);
 	bom[0] = f.get();
 	bom[1] = f.get();
 	f.close();
 	if ((bom[0] == 0xfe && bom[1] == 0xff) || (bom[0] == 0xff && bom[1] == 0xfe)){
-		//fread(bom, sizeof(int), 2, file);
-
+		TCHAR _tPath[100];
+		MultiByteToWideChar(CP_ACP, 0, path, strlen(path), _tPath, _tclen(_tPath));
 		TCHAR textWchar_t[256];
-		FILE *fWchar_t = fopen(path, "r");
-		wifstream fin(path,ios_base::binary);
-		wstring str;
-		bool first = true;
-		while (!fin.eof()){
-			//wcout << fin.rdbuf();
-			//getline(fin, str);
-			//fin >> textWchar_t;
-			//fscanf(file, "%[^\n]s", textWchar_t);
-			// read   
-			/*fin.imbue(std::locale(fin.getloc()));
-			for (wchar_t c; fin.get(c);)
-				std::cout << std::showbase << std::hex << c << '\n';*/
-
-			char t[256];
-			fgets(t, 255, file);
-			int j = 0;
-			char res[256];
-			int i = 0;
-			if (first){
-				i = 2;
-				first = false;
-				fputc(t[0], file);
-				fputc(t[1], file);
-			}
-			for (; i < 256; i++){
-				if (t[i] == 52428 || t[i] == -52)
-					break;
-				if (t[i] != '\0')
-					res[j++] = t[i];
-
-			}
-			res[j] = '\0';
-			MultiByteToWideChar(CP_ACP, 0, res, strlen(res)+1, textWchar_t, strlen(res));
-			//wprintf(L"%s", textWchar_t);
-			textWchar_t[j] = L'\0';
+		file = _wfopen(_tPath, _T("r,ccs=UTF-16LE"));
+		w = _wfopen(_T("resFile.txt"), _T("w,ccs=UTF-16LE"));
+		while (!feof(file)){
+			wchar_t t[256];
+			fgetws(textWchar_t, 255, file);
 			reverse(textWchar_t);
 			fputws(textWchar_t, w);
 		}
-		
 	}
 	else{
-
+		char textChar[256];
+		file = fopen(path, "r");
+		w = fopen("resFile.txt", "w");
 		while (!feof(file)){
 			fgets(textChar, 255, file);
 			reverse(textChar);
