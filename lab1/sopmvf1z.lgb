@@ -30,7 +30,7 @@ void reverse(T* text){
 		len = strlen((char*)text) - 1;
 	else
 		len = wcslen((wchar_t*)text) - 1;
-	while (text[len] == '\n' || text[len] == '\r'){
+	if (text[len] == '\n'){
 		len--;
 	}
 	if (len <= 0)
@@ -97,45 +97,17 @@ void readAndReverse(){
 	bom[1] = f.get();
 	f.close();
 	if ((bom[0] == 0xfe && bom[1] == 0xff) || (bom[0] == 0xff && bom[1] == 0xfe)){
-		//fread(bom, sizeof(int), 2, file);
+		fread(bom, sizeof(int), 2, file);
 
 		TCHAR textWchar_t[256];
 		FILE *fWchar_t = fopen(path, "r");
-		wifstream fin(path,ios_base::binary);
-		wstring str;
-		bool first = true;
-		while (!fin.eof()){
+		//wifstream fin(path);
+		while (!feof(file)){
 			//wcout << fin.rdbuf();
-			//getline(fin, str);
 			//fin >> textWchar_t;
-			//fscanf(file, "%[^\n]s", textWchar_t);
-			// read   
-			/*fin.imbue(std::locale(fin.getloc()));
-			for (wchar_t c; fin.get(c);)
-				std::cout << std::showbase << std::hex << c << '\n';*/
-
-			char t[256];
-			fgets(t, 255, file);
-			int j = 0;
-			char res[256];
-			int i = 0;
-			if (first){
-				i = 2;
-				first = false;
-				fputc(t[0], file);
-				fputc(t[1], file);
-			}
-			for (; i < 256; i++){
-				if (t[i] == 52428 || t[i] == -52)
-					break;
-				if (t[i] != '\0')
-					res[j++] = t[i];
-
-			}
-			res[j] = '\0';
-			MultiByteToWideChar(CP_ACP, 0, res, strlen(res)+1, textWchar_t, strlen(res));
+			fscanf(file, "%s", textWchar_t);
+			//fgetws(textWchar_t, 255, file);
 			//wprintf(L"%s", textWchar_t);
-			textWchar_t[j] = L'\0';
 			reverse(textWchar_t);
 			fputws(textWchar_t, w);
 		}
