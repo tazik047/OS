@@ -14,8 +14,6 @@
 using namespace std;
 
 void readAndReverse();
-void myReverse(char*);
-void myReverse(wchar_t*);
 
 int compare(const void* e1, const void* e2) {
 	TCHAR* s1 = *(TCHAR**)e1;
@@ -45,7 +43,7 @@ void reverse(T* text){
 int _tmain(int argc, _TCHAR* argv[])
 {
 	_tsetlocale(LC_ALL, _T("Russian")); // русский в консоли.
-	/*
+	
 	_tprintf(_T("Первое задание:\n"));
 	_tprintf(_T("\tРазмер tchar: %d\n"), sizeof(TCHAR));
 	
@@ -57,25 +55,26 @@ int _tmain(int argc, _TCHAR* argv[])
 		//scanf("%s", buf[i++]);
 		cin >> buf[i++];
 	}
-	char buf1[256];
 	TCHAR** _tbuf = new TCHAR*[LEN_MAS];
 	_tprintf(_T("\nВторое задание:\n"));
 	while (i > 0){
-		OemToCharA(buf[--i], buf1);
-		_tbuf[i] = new wchar_t[sizeof(buf1)];
-		MultiByteToWideChar(CP_ACP, 0, buf1, sizeof(buf1), _tbuf[i], sizeof(buf1));
+		OemToCharA(buf[--i], buf[i]);
+		_tbuf[i] = new wchar_t[sizeof(buf[i])];
+		MultiByteToWideChar(CP_ACP, 0, buf[i], sizeof(buf[i]), _tbuf[i], sizeof(buf[i]));
 		_tprintf(_T("\t%s\n"), _tbuf[i]);
 		MessageBox(0, _tbuf[i], _T("Введенное слово"), MB_OK);
 	}
 
 	_tprintf(_T("\nТретье задание:\n"));
+	int temp = sizeof(*_tbuf[0]);
+	int temp1 = sizeof(int);
 	qsort(_tbuf, LEN_MAS, sizeof(_tbuf[0]), compare);
 	while (i < LEN_MAS){
 		WideCharToMultiByte(CP_ACP, 0, _tbuf[i], 256, buf[i], 256, NULL, NULL);
 		printf("\t%s\n", buf[i++]);
 	}
 	delete _tbuf;
-	*/
+	
 
 	readAndReverse();
 
@@ -97,7 +96,7 @@ void readAndReverse(){
 	f.close();
 	if ((bom[0] == 0xfe && bom[1] == 0xff) || (bom[0] == 0xff && bom[1] == 0xfe)){
 		TCHAR _tPath[100];
-		MultiByteToWideChar(CP_ACP, 0, path, strlen(path), _tPath, _tclen(_tPath));
+		MultiByteToWideChar(CP_ACP, 0, path, sizeof(path), _tPath, sizeof(_tPath));
 		TCHAR textWchar_t[256];
 		file = _wfopen(_tPath, _T("r,ccs=UTF-16LE"));
 		w = _wfopen(_T("resFile.txt"), _T("w,ccs=UTF-16LE"));
@@ -120,19 +119,6 @@ void readAndReverse(){
 	}
 	fclose(w);
 	fclose(file);
-}
-
-void myReverse(char* text){
-	wchar_t newText[sizeof(text)];
-	MultiByteToWideChar(CP_ACP, 0, text, sizeof(text), newText, sizeof(text));
-	myReverse(newText);
-}
-
-void myReverse(wchar_t* text){
-	int len = _tcslen(text);
-	if (text[len - 1] == '\n')
-		len--;
-	wprintf(L" %d\n", len);
 }
 
 
