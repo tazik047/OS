@@ -27,7 +27,7 @@ extern "C"{
 
 	MY_VAR int function(int, int);
 	MY_VAR int __stdcall genKey(int &c, int&d);
-	MY_VAR int __stdcall crypt(int a, int key);
+	MY_VAR int __stdcall crypt(int a, int key, int n);
 #ifdef __cplusplus
 }
 #endif
