@@ -3,10 +3,9 @@
 
 #include "stdafx.h"
 #define DYNAMIC
-#include "..\lab2\static.h"
+#include "MY_VAR.h"
 #include <stdlib.h>
 
-MY_VAR int function(int s, int f){ return s + f; }
 
 int simple() {
 	int r = (rand() % 100 + 3) | 1;
