@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include"MY_VAR.h"
+#include"..\dynamicLib\MY_VAR.h"
 #include<Windows.h>
 #include<locale.h>
 #include<stdlib.h>
