@@ -1,0 +1,4 @@
+LIBRARY
+EXPORTS
+genKey
+crypt

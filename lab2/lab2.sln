@@ -7,6 +7,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "staticLib", "lab2\lab2.vcxp
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dynamicLib", "dynamicLib\dynamicLib.vcxproj", "{339E7BB0-2F04-4B21-8C4B-D53E4E0D725F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "checkDyn", "checkDyn\checkDyn.vcxproj", "{3D3D2274-1AD8-429B-8266-446DA7BB0479}"
+	ProjectSection(ProjectDependencies) = postProject
+		{339E7BB0-2F04-4B21-8C4B-D53E4E0D725F} = {339E7BB0-2F04-4B21-8C4B-D53E4E0D725F}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -21,6 +26,10 @@ Global
 		{339E7BB0-2F04-4B21-8C4B-D53E4E0D725F}.Debug|Win32.Build.0 = Debug|Win32
 		{339E7BB0-2F04-4B21-8C4B-D53E4E0D725F}.Release|Win32.ActiveCfg = Release|Win32
 		{339E7BB0-2F04-4B21-8C4B-D53E4E0D725F}.Release|Win32.Build.0 = Release|Win32
+		{3D3D2274-1AD8-429B-8266-446DA7BB0479}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3D3D2274-1AD8-429B-8266-446DA7BB0479}.Debug|Win32.Build.0 = Debug|Win32
+		{3D3D2274-1AD8-429B-8266-446DA7BB0479}.Release|Win32.ActiveCfg = Release|Win32
+		{3D3D2274-1AD8-429B-8266-446DA7BB0479}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
