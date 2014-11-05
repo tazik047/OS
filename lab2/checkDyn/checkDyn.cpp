@@ -17,7 +17,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	HMODULE h = LoadLibrary(_T("dynamicLib.dll"));
 	if (h != 0)
 	{
-		
+
 		GENKEY genKey = (GENKEY)GetProcAddress(h, "genKey");
 		CRYPT crypt = (CRYPT)GetProcAddress(h, "crypt");
 		if (genKey  && crypt)
@@ -27,9 +27,9 @@ int _tmain(int argc, _TCHAR* argv[])
 			printf("Введите число ");
 			scanf_s("%i", &inf);
 			unsigned p, q;
-			unsigned e = genKey(int,int);
+			/*unsigned e = genKey(int,int);
 			unsigned inf_ = crypt(e, n, inf);
-			printf("Зашифрованная информация %d: ", inf_);
+			printf("Зашифрованная информация %d: ", inf_);*/
 		}
 		FreeLibrary(h);
 	}
@@ -38,4 +38,4 @@ int _tmain(int argc, _TCHAR* argv[])
 		return 1;
 	}
 	return 0;
-
+}
