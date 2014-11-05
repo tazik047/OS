@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "staticLib", "ConsoleApplica
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dynamicLib", "ConsoleApplication2\ConsoleApplication2.vcxproj", "{C6D12EF1-AD3F-496E-B3A0-5363ED628D48}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CheckStatic", "CheckStatic\CheckStatic.vcxproj", "{8914431F-4018-4CF5-A24D-0546D6D458AA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -27,6 +29,10 @@ Global
 		{C6D12EF1-AD3F-496E-B3A0-5363ED628D48}.Debug|Win32.Build.0 = Debug|Win32
 		{C6D12EF1-AD3F-496E-B3A0-5363ED628D48}.Release|Win32.ActiveCfg = Release|Win32
 		{C6D12EF1-AD3F-496E-B3A0-5363ED628D48}.Release|Win32.Build.0 = Release|Win32
+		{8914431F-4018-4CF5-A24D-0546D6D458AA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8914431F-4018-4CF5-A24D-0546D6D458AA}.Debug|Win32.Build.0 = Debug|Win32
+		{8914431F-4018-4CF5-A24D-0546D6D458AA}.Release|Win32.ActiveCfg = Release|Win32
+		{8914431F-4018-4CF5-A24D-0546D6D458AA}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
