@@ -2,7 +2,7 @@
 //
 #include "stdafx.h"
 #define DYNAMIC
-#include "MY_VAR.h"
+#include "../lab2/static.h"
 #include <stdlib.h>
 
 
@@ -37,7 +37,7 @@ int gcd(int a, int b) {
 	}
 	return a + b;
 }
-MY_VAR int __stdcall genKey(int &c, int&d) {
+RCA_crypt int __stdcall genKey(int &c, int&d) {
 	int p = simple();
 	int q = p;
 	while (q == p) {
@@ -49,7 +49,7 @@ MY_VAR int __stdcall genKey(int &c, int&d) {
 	for (d = 3; (d*c) % 4 != 1; d++);
 	return n;
 }
-MY_VAR int __stdcall crypt(int a, int key, int n) {
+RCA_crypt int __stdcall crypt(int a, int key, int n) {
 	int b = a;
 	int r = key;
 	int count = 0;

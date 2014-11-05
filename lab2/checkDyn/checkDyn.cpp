@@ -2,7 +2,6 @@
 //
 
 #include "stdafx.h"
-#include "..\ConsoleApplication2\MY_VAR.h"
 #include<Windows.h>
 #include<locale.h>
 #include<stdlib.h>

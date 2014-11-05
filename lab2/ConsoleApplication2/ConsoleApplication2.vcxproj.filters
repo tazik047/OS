@@ -24,9 +24,6 @@
     <ClInclude Include="targetver.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
-    <ClInclude Include="..\dynamicLib\MY_VAR.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -40,7 +37,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\dynamicLib\Source.def">
+    <None Include="Source.def">
       <Filter>Файлы исходного кода</Filter>
     </None>
   </ItemGroup>
