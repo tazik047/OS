@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dynamicLib", "ConsoleApplic
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CheckStatic", "CheckStatic\CheckStatic.vcxproj", "{8914431F-4018-4CF5-A24D-0546D6D458AA}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "checkDynamicStatic", "checkDynamicStatic\checkDynamicStatic.vcxproj", "{5D4FA936-9AF3-4260-AA5D-8995E573F1BA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -33,6 +35,10 @@ Global
 		{8914431F-4018-4CF5-A24D-0546D6D458AA}.Debug|Win32.Build.0 = Debug|Win32
 		{8914431F-4018-4CF5-A24D-0546D6D458AA}.Release|Win32.ActiveCfg = Release|Win32
 		{8914431F-4018-4CF5-A24D-0546D6D458AA}.Release|Win32.Build.0 = Release|Win32
+		{5D4FA936-9AF3-4260-AA5D-8995E573F1BA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5D4FA936-9AF3-4260-AA5D-8995E573F1BA}.Debug|Win32.Build.0 = Debug|Win32
+		{5D4FA936-9AF3-4260-AA5D-8995E573F1BA}.Release|Win32.ActiveCfg = Release|Win32
+		{5D4FA936-9AF3-4260-AA5D-8995E573F1BA}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
