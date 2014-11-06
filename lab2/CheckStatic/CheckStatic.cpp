@@ -6,7 +6,7 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	genKey()
+	//genKey();
 	return 0;
 }
 

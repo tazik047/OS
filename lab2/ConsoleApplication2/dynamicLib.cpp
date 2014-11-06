@@ -27,16 +27,16 @@ int simple() {
 }
 
 int gcd(int a, int b) {
-	while (a != 0 || b != 0) {
-		if (a > b) {
-			a = a%b;
-		}
-		else {
-			b = b%a;
-		}
+	int c;
+	while (b)
+	{
+		c = a % b;
+		a = b;
+		b = c;
 	}
-	return a + b;
+	return abs(a);
 }
+
 RCA_crypt int __stdcall genKey(int &c, int&d) {
 	int p = simple();
 	int q = p;
@@ -46,7 +46,9 @@ RCA_crypt int __stdcall genKey(int &c, int&d) {
 	int n = p*q;
 	int u = (p - 1)*(q - 1);
 	for (c = 3; gcd(c, u) != 1; c += 2);
-	for (d = 3; (d*c) % 4 != 1; d++);
+	d = 3;
+	while ((c * d) % u != 1)
+		d += 2;
 	return n;
 }
 RCA_crypt int __stdcall crypt(int a, int key, int n) {
@@ -64,3 +66,5 @@ RCA_crypt int __stdcall crypt(int a, int key, int n) {
 	}
 	return b;
 }
+
+

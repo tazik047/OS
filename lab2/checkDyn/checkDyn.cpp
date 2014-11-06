@@ -21,14 +21,15 @@ int _tmain(int argc, _TCHAR* argv[])
 		CRYPT crypt = (CRYPT)GetProcAddress(h, "crypt");
 		if (genKey  && crypt)
 		{
-			unsigned inf;
+			int inf;
 			setlocale(LC_ALL, "Russian");
 			printf("Введите число ");
 			scanf_s("%i", &inf);
-			unsigned p, q;
-			/*unsigned e = genKey(int,int);
-			unsigned inf_ = crypt(e, n, inf);
-			printf("Зашифрованная информация %d: ", inf_);*/
+			int p, q;
+			int n = genKey(p,q);
+			int inf_ = crypt(inf, p, n);
+			printf("Зашифрованная информация %d: ", inf_);
+			printf("Расшифрованная информация %d: ", crypt(inf_, q,n ));
 		}
 		FreeLibrary(h);
 	}
@@ -38,3 +39,5 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 	return 0;
 }
+
+
