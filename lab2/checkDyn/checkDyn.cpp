@@ -30,6 +30,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			int inf_ = crypt(inf, p, n);
 			printf("Зашифрованная информация %d: ", inf_);
 			printf("Расшифрованная информация %d: ", crypt(inf_, q,n ));
+			system("pause");
 		}
 		FreeLibrary(h);
 	}
@@ -37,6 +38,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		return 1;
 	}
+
 	return 0;
 }
 
