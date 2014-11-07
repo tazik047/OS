@@ -13,6 +13,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CheckStatic", "CheckStatic\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "checkDynamicStatic", "checkDynamicStatic\checkDynamicStatic.vcxproj", "{5D4FA936-9AF3-4260-AA5D-8995E573F1BA}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "resourceDll", "resourceDll\resourceDll.vcxproj", "{D6AE7704-BE99-4335-A3C0-529AD75DA800}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "resourceDllEnglish", "resourceDllEnglish\resourceDllEnglish.vcxproj", "{F0F66DCC-0E4A-45F6-B63F-2401D7C536D1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -39,6 +43,14 @@ Global
 		{5D4FA936-9AF3-4260-AA5D-8995E573F1BA}.Debug|Win32.Build.0 = Debug|Win32
 		{5D4FA936-9AF3-4260-AA5D-8995E573F1BA}.Release|Win32.ActiveCfg = Release|Win32
 		{5D4FA936-9AF3-4260-AA5D-8995E573F1BA}.Release|Win32.Build.0 = Release|Win32
+		{D6AE7704-BE99-4335-A3C0-529AD75DA800}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D6AE7704-BE99-4335-A3C0-529AD75DA800}.Debug|Win32.Build.0 = Debug|Win32
+		{D6AE7704-BE99-4335-A3C0-529AD75DA800}.Release|Win32.ActiveCfg = Release|Win32
+		{D6AE7704-BE99-4335-A3C0-529AD75DA800}.Release|Win32.Build.0 = Release|Win32
+		{F0F66DCC-0E4A-45F6-B63F-2401D7C536D1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F0F66DCC-0E4A-45F6-B63F-2401D7C536D1}.Debug|Win32.Build.0 = Debug|Win32
+		{F0F66DCC-0E4A-45F6-B63F-2401D7C536D1}.Release|Win32.ActiveCfg = Release|Win32
+		{F0F66DCC-0E4A-45F6-B63F-2401D7C536D1}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
