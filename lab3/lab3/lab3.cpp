@@ -51,6 +51,7 @@ bool writePromt(HANDLE h, TCHAR t[]) {
 	DWORD d;
 	TCHAR endl[] = _T("\r\n");
 	bool b = WriteConsole(h, t, _tcslen(t), &d, 0);
+	DWORD er = GetLastError();
 	if (b)
 		b = WriteConsole(h, endl, 2, &d, 0);
 	return b;
@@ -64,7 +65,7 @@ bool readPass(HANDLE h1, HANDLE h2, TCHAR pas[], int ch) {
 	for (int i = 0; i < ch - 1; i++) {
 		b = ReadConsole(h1, &t, 1, &d, 0);
 		if (t == _T('\r\n')) break;
-		b = WriteConsole(h1, &star, 1, &d, 0);
+		b = WriteConsole(h2, &star, 1, &d, 0);
 		b = WriteConsole(h2, endl, 1, &d, 0);
 	}
 	return b;
@@ -170,12 +171,34 @@ void workingWithConsole() {
 	_tprintf(_T("%d"),consoleMode);*/
 }
 
+void sevenTask(bool withEcho){
+	HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+	HANDLE in = GetStdHandle(STD_INPUT_HANDLE);
+	if (out == INVALID_HANDLE_VALUE || in == INVALID_HANDLE_VALUE)
+	{
+		_tprintf(_T("error - %d\n"),GetLastError());
+		return;
+	}
+	writePromt(out, _T("Введите свой пароль:"));
+	if (!withEcho){
+		DWORD mode;
+		GetConsoleMode(in, &mode);
+		SetConsoleMode(in, mode & (~ENABLE_ECHO_INPUT));
+		GetConsoleMode(out, &mode);
+		SetConsoleMode(out, mode | ENABLE_LINE_INPUT);
+		printConsoleMode(out);
+		TCHAR t[258];
+		readPass(out, in, t, 256);		
+	}
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	setlocale(LC_ALL, "Russian");
 	//checkMessageBox();
 	//checkErrors();
-	workingWithConsole();
+	//workingWithConsole();
+	sevenTask(FALSE);
 	system("pause");
 }
 
