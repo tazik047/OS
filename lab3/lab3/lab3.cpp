@@ -149,7 +149,37 @@ void printConsoleMode(HANDLE h){
 			_tprintf(_T("Если курсор мыши - в пределах границ консольного окна, и окно имеет фокус клавиатуры, события от нажатия мыши, созданные перемещением мыши и нажатием кнопки помещаются в буфере ввода\n"));
 
 }
+void tcharToInt(TCHAR t[], int& i) {
+	for (int k = 0; k < _tcslen(t); k++) {
+		if (t[k] - '0'<0 || t[k] - '0'>9) {
+			printf("Вы не ввели число");
+			return;
+		}
 
+	}
+	for (int j = 0; j < _tcslen(t); j++) {
+		i = i + (t[j] - '0')*pow(10, _tcslen(t) - j - 1);
+	}
+}
+void outputDigit(int digit) {
+	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+	bool b;
+	DWORD d;
+	TCHAR buf[256];
+	_stprintf_s(buf, _T("%d"), digit);
+	b = WriteConsole(h, buf, _tcslen(buf), &d, 0);
+	printf("\n");
+}
+int inputDigit() {
+	HANDLE h = GetStdHandle(STD_INPUT_HANDLE);
+	bool b;
+	DWORD d;
+	TCHAR buf[256];
+	b = ReadConsole(h, buf, _tcslen(buf), &d, 0);
+	int digit;
+	tcharToInt(buf, digit);
+	return digit;
+}
 
 void workingWithConsole() {
 	HANDLE hStdin;
