@@ -188,7 +188,7 @@ void sevenTask(bool withEcho){
 		SetConsoleMode(out, mode | ENABLE_LINE_INPUT);
 		printConsoleMode(out);
 		TCHAR t[258];
-		readPass(out, in, t, 256);		
+		readPass(in, out, t, 256);		
 	}
 }
 
