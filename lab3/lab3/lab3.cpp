@@ -130,7 +130,6 @@ void checkMessageBox() {
 void printConsoleMode(HANDLE h){
 	DWORD text;
 	GetConsoleMode(h, &text);
-	setlocale(LC_ALL, "Russian");
 	//printf("%d", (text&ENABLE_ECHO_INPUT)==ENABLE_ECHO_INPUT);
 	if ((text&ENABLE_QUICK_EDIT_MODE) == ENABLE_QUICK_EDIT_MODE)
 		_tprintf(_T("Работа с мышью присутствует\n"));
@@ -141,6 +140,13 @@ void printConsoleMode(HANDLE h){
 		_tprintf(_T("Показ символов включен\n"));
 	if ((text&ENABLE_INSERT_MODE) == ENABLE_INSERT_MODE)
 		_tprintf(_T("Символы записываются начиная с текущего положения курсора\n"));
+	if ((text&ENABLE_PROCESSED_INPUT) == ENABLE_PROCESSED_INPUT)
+		_tprintf(_T("Сигнал CTRL+C обрабатывается системой и не помещается в буфере ввода\n"));
+	if ((text&ENABLE_WINDOW_INPUT) == ENABLE_WINDOW_INPUT)
+			_tprintf(_T("Пользователь воздействует, чтобы изменить размер экранного буфера консоли записанный в буфере ввода консоли\n"));
+	if ((text&ENABLE_MOUSE_INPUT) == ENABLE_MOUSE_INPUT)
+			_tprintf(_T("Если курсор мыши - в пределах границ консольного окна, и окно имеет фокус клавиатуры, события от нажатия мыши, созданные перемещением мыши и нажатием кнопки помещаются в буфере ввода\n"));
+
 }
 
 
@@ -166,6 +172,7 @@ void workingWithConsole() {
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	setlocale(LC_ALL, "Russian");
 	//checkMessageBox();
 	//checkErrors();
 	workingWithConsole();
