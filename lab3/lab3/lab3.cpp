@@ -126,14 +126,26 @@ void checkMessageBox() {
 		MB_ICONQUESTION | MB_OKCANCEL
 		);
 }
+
 void workingWithConsole() {
 	HANDLE hStdin;
+	DWORD fdwSaveOldMode; 
+	DWORD consoleMode;
 	hStdin = GetStdHandle(STD_INPUT_HANDLE);
 	if (hStdin == INVALID_HANDLE_VALUE)
 		printf("GetStdHandle");
+	if (!GetConsoleMode(hStdin, &fdwSaveOldMode))
+		printf("GetConsoleMode");
 	printf("SaveDonbassPeople");
-	SetConsoleMode(hStdin, ENABLE_QUICK_EDIT_MODE);
+	consoleMode = ENABLE_QUICK_EDIT_MODE | ENABLE_LINE_INPUT |
+		ENABLE_ECHO_INPUT |
+		ENABLE_INSERT_MODE;
+	if (!SetConsoleMode(hStdin, consoleMode)) 
+		printf("SetConsoleMode");
+	GetConsoleMode(hStdin, &consoleMode);
+	_tprintf(_T("%d"),consoleMode);
 }
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//checkMessageBox();
