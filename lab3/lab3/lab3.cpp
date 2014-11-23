@@ -131,7 +131,7 @@ void printConsoleMode(HANDLE h){
 	DWORD text;
 	GetConsoleMode(h, &text);
 	//printf("%d", (text&ENABLE_ECHO_INPUT)==ENABLE_ECHO_INPUT);
-	if ((text&ENABLE_ECHO_INPUT) == ENABLE_QUICK_EDIT_MODE)
+	if ((text&ENABLE_QUICK_EDIT_MODE) == ENABLE_QUICK_EDIT_MODE)
 		_tprintf(_T("?\n"));
 	if ((text&ENABLE_LINE_INPUT) == ENABLE_LINE_INPUT)
 		_tprintf(_T("Включен ввод строки\n"));
