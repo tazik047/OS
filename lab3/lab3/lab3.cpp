@@ -149,19 +149,27 @@ void printConsoleMode(HANDLE h){
 			_tprintf(_T("Если курсор мыши - в пределах границ консольного окна, и окно имеет фокус клавиатуры, события от нажатия мыши, созданные перемещением мыши и нажатием кнопки помещаются в буфере ввода\n"));
 
 }
+
 void tcharToInt(TCHAR t[], int& i) {
+	i = 0;
+	int count = 0;
 	for (int k = 0; k < _tcslen(t); k++) {
+		if (t[k] == '\r') {
+			break;
+		}
 		if (t[k] - '0'<0 || t[k] - '0'>9) {
-			printf("Вы не ввели число");
+			printf("Не число!");
 			return;
 		}
-
+		count++;
 	}
-	for (int j = 0; j < _tcslen(t); j++) {
-		i = i + (t[j] - '0')*pow(10, _tcslen(t) - j - 1);
+	for (int j = 0; j < count; j++) {
+		i = i + (t[j] - '0')*pow(10, count - j - 1);
 	}
 }
+
 void outputDigit(int digit) {
+
 	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 	bool b;
 	DWORD d;
@@ -170,13 +178,14 @@ void outputDigit(int digit) {
 	b = WriteConsole(h, buf, _tcslen(buf), &d, 0);
 	printf("\n");
 }
+
 int inputDigit() {
 	HANDLE h = GetStdHandle(STD_INPUT_HANDLE);
 	bool b;
 	DWORD d;
 	TCHAR buf[256];
 	b = ReadConsole(h, buf, _tcslen(buf), &d, 0);
-	int digit;
+	int digit=0;
 	tcharToInt(buf, digit);
 	return digit;
 }
@@ -197,6 +206,7 @@ void workingWithConsole() {
 	if (!SetConsoleMode(hStdin, consoleMode)) 
 		printf("SetConsoleMode");
 	printConsoleMode(hStdin);
+	inputDigit();
 	/*GetConsoleMode(hStdin, &consoleMode);
 	_tprintf(_T("%d"),consoleMode);*/
 }
@@ -227,8 +237,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	setlocale(LC_ALL, "Russian");
 	//checkMessageBox();
 	//checkErrors();
-	//workingWithConsole();
-	sevenTask(FALSE);
+	workingWithConsole();
+	//sevenTask(FALSE);
 	system("pause");
 }
 
