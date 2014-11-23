@@ -127,6 +127,21 @@ void checkMessageBox() {
 		);
 }
 
+void printConsoleMode(HANDLE h){
+	DWORD text;
+	GetConsoleMode(h, &text);
+	//printf("%d", (text&ENABLE_ECHO_INPUT)==ENABLE_ECHO_INPUT);
+	if ((text&ENABLE_ECHO_INPUT) == ENABLE_QUICK_EDIT_MODE)
+		_tprintf(_T("?\n"));
+	if ((text&ENABLE_LINE_INPUT) == ENABLE_LINE_INPUT)
+		_tprintf(_T("Включен ввод строки\n"));
+	if ((text&ENABLE_ECHO_INPUT) == ENABLE_ECHO_INPUT)
+		_tprintf(_T("Включен показ ввода\n"));
+	if ((text&ENABLE_INSERT_MODE) == ENABLE_INSERT_MODE)
+		_tprintf(_T("??\n"));
+}
+
+
 void workingWithConsole() {
 	HANDLE hStdin;
 	DWORD fdwSaveOldMode; 
@@ -142,8 +157,9 @@ void workingWithConsole() {
 		ENABLE_INSERT_MODE;
 	if (!SetConsoleMode(hStdin, consoleMode)) 
 		printf("SetConsoleMode");
-	GetConsoleMode(hStdin, &consoleMode);
-	_tprintf(_T("%d"),consoleMode);
+	printConsoleMode(hStdin);
+	/*GetConsoleMode(hStdin, &consoleMode);
+	_tprintf(_T("%d"),consoleMode);*/
 }
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -151,5 +167,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	//checkMessageBox();
 	//checkErrors();
 	workingWithConsole();
+	system("pause");
 }
 
