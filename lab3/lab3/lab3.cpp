@@ -130,15 +130,17 @@ void checkMessageBox() {
 void printConsoleMode(HANDLE h){
 	DWORD text;
 	GetConsoleMode(h, &text);
+	setlocale(LC_ALL, "Russian");
 	//printf("%d", (text&ENABLE_ECHO_INPUT)==ENABLE_ECHO_INPUT);
 	if ((text&ENABLE_QUICK_EDIT_MODE) == ENABLE_QUICK_EDIT_MODE)
-		_tprintf(_T("?\n"));
-	if ((text&ENABLE_LINE_INPUT) == ENABLE_LINE_INPUT)
-		_tprintf(_T("Включен ввод строки\n"));
+		_tprintf(_T("Работа с мышью присутствует\n"));
+	if ((text&ENABLE_LINE_INPUT) == ENABLE_LINE_INPUT) {
+		_tprintf(_T("Ввод в буфер по кнопке Энтер\n"));
+	}
 	if ((text&ENABLE_ECHO_INPUT) == ENABLE_ECHO_INPUT)
-		_tprintf(_T("Включен показ ввода\n"));
+		_tprintf(_T("Показ символов включен\n"));
 	if ((text&ENABLE_INSERT_MODE) == ENABLE_INSERT_MODE)
-		_tprintf(_T("??\n"));
+		_tprintf(_T("Символы записываются начиная с текущего положения курсора\n"));
 }
 
 
