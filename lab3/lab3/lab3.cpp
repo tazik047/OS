@@ -64,10 +64,15 @@ bool readPass(HANDLE h1, HANDLE h2, TCHAR pas[], int ch) {
 	int i; bool b;
 	for (int i = 0; i < ch - 1; i++) {
 		b = ReadConsole(h1, &t, 1, &d, 0);
-		if (t == _T('\r\n')) break;
+		if (t == _T('\r\n')){
+			pas[i] = '\0';
+			break;
+		}
+		pas[i] = t;
 		b = WriteConsole(h2, &star, 1, &d, 0);
-		b = WriteConsole(h2, endl, 1, &d, 0);
+		
 	}
+	b = WriteConsole(h2, endl, 1, &d, 0);
 	return b;
 
 }
@@ -223,12 +228,29 @@ void sevenTask(bool withEcho){
 	if (!withEcho){
 		DWORD mode;
 		GetConsoleMode(in, &mode);
-		SetConsoleMode(in, mode & (~ENABLE_ECHO_INPUT));
+		SetConsoleMode(in, mode & (~ENABLE_ECHO_INPUT) &(~ENABLE_LINE_INPUT));
 		GetConsoleMode(out, &mode);
-		SetConsoleMode(out, mode | ENABLE_LINE_INPUT);
-		printConsoleMode(out);
-		TCHAR t[258];
-		readPass(in, out, t, 256);		
+		SetConsoleMode(out, mode | ENABLE_ECHO_INPUT);
+		//printConsoleMode(out);
+		TCHAR pass1[258],pass2[258];
+		readPass(in, out, pass1, 256);
+		writePromt(out, _T("Повторите ваш пароль:"));
+		readPass(in, out, pass2, 256);
+		if (_tcslen(pass1) != _tcslen(pass2))
+		{
+			writePromt(out, _T("Пароли не совпадают"));
+			sevenTask(withEcho);
+			return;
+		}
+		for (int i = 0; i < _tcslen(pass1); i++)
+		{
+			if (pass1[i] != pass2[i]){
+				writePromt(out, _T("Пароли не совпадают"));
+				sevenTask(withEcho);
+				return;
+			}
+		}
+
 	}
 }
 
@@ -237,8 +259,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	setlocale(LC_ALL, "Russian");
 	//checkMessageBox();
 	//checkErrors();
-	workingWithConsole();
-	//sevenTask(FALSE);
+	//workingWithConsole();
+	sevenTask(FALSE);
 	system("pause");
 }
 
