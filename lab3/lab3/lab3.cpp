@@ -169,7 +169,7 @@ void tcharToInt(TCHAR t[], int& i) {
 		count++;
 	}
 	for (int j = 0; j < count; j++) {
-		i = i + (t[j] - '0')*pow(10, count - j - 1);
+		i = i * 10 + (t[j] - '0');
 	}
 }
 
@@ -278,7 +278,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	//checkMessageBox();
 	//checkErrors();
 	//workingWithConsole();
-	sevenTask(TRUE);
+	//sevenTask(TRUE);
+	int a = inputDigit();
+	outputDigit(a);
 	system("pause");
 }
 
