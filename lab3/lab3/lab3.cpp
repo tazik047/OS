@@ -35,7 +35,7 @@ ErrorCode checkPass(TCHAR password[]) {
 	int len = _tcslen(password);
 	if (len < 8) return GP_STRONG;
 	for (int i = 0; i < len; i++) {
-		if (password[i] == _T('_'))
+		if (password[i] == _T(' '))
 			count++;
 		else {
 			Classes cl = getClass(password[i]);
@@ -84,7 +84,7 @@ BOOL readPass(HANDLE h1, HANDLE h2, TCHAR pas[], int ch, BOOL writeStar) {
 		if (writeStar)
 			b = WriteConsole(h2, &star, 1, &d, 0);
 	}
-	b = WriteConsole(h2, endl, 1, &d, 0);
+	b = WriteConsole(h2, endl, 2, &d, 0);
 	return b;
 
 }
@@ -223,7 +223,7 @@ void workingWithConsole() {
 	if (!SetConsoleMode(hStdin, consoleMode)) 
 		printf("SetConsoleMode");
 	printConsoleMode(hStdin);
-	inputDigit();
+	//inputDigit();
 	/*GetConsoleMode(hStdin, &consoleMode);
 	_tprintf(_T("%d"),consoleMode);*/
 }
@@ -243,13 +243,9 @@ void sevenTask(BOOL withEcho){
 		readPass(in, out, pass1, 256, FALSE);
 	}
 	else{
-		DWORD mode;
+		DWORD mode; TCHAR pass2[258];
 		GetConsoleMode(in, &mode);
-		SetConsoleMode(in, mode & (~ENABLE_ECHO_INPUT) &(~ENABLE_LINE_INPUT));
-		GetConsoleMode(out, &mode);
-		SetConsoleMode(out, mode | ENABLE_ECHO_INPUT);
-		//printConsoleMode(out);
-		TCHAR pass2[258];
+		BOOL an = SetConsoleMode(in, (mode & (~ENABLE_ECHO_INPUT) &(~ENABLE_LINE_INPUT)) | ENABLE_INSERT_MODE);
 		readPass(in, out, pass1, 256, TRUE);
 		writePromt(out, _T("Повторите ваш пароль:"));
 		readPass(in, out, pass2, 256, TRUE);
@@ -290,4 +286,3 @@ int _tmain(int argc, _TCHAR* argv[])
 	//outputDigit(a);
 	system("pause");
 }
-
