@@ -30,7 +30,6 @@ Classes getClass(TCHAR c) {
 }
 
 ErrorCode checkPass(TCHAR password[]) {
-	ErrorCode code;
 	int count = 0;
 	int mask = 0;
 	int len = _tcslen(password);
@@ -47,21 +46,21 @@ ErrorCode checkPass(TCHAR password[]) {
 	return mask == 15 && count < len / 4 ? GP_SUCCESS : GP_STRONG;
 }
 
-bool writePromt(HANDLE h, TCHAR t[]) {
+BOOL writePromt(HANDLE h, TCHAR t[]) {
 	DWORD d;
 	TCHAR endl[] = _T("\r\n");
-	bool b = WriteConsole(h, t, _tcslen(t), &d, 0);
+	BOOL b = WriteConsole(h, t, _tcslen(t), &d, 0);
 	DWORD er = GetLastError();
 	if (b)
 		b = WriteConsole(h, endl, 2, &d, 0);
 	return b;
 }
 
-bool readPass(HANDLE h1, HANDLE h2, TCHAR pas[], int ch) {
+BOOL readPass(HANDLE h1, HANDLE h2, TCHAR pas[], int ch, BOOL writeStar) {
 	TCHAR star = _T('*');
 	TCHAR endl[] = _T("\r\n");
 	DWORD d; TCHAR t;
-	int i; bool b;
+	BOOL b;
 	for (int i = 0; i < ch - 1; i++) {
 		b = ReadConsole(h1, &t, 1, &d, 0);
 		if (t == _T('\r\n')){
@@ -69,8 +68,9 @@ bool readPass(HANDLE h1, HANDLE h2, TCHAR pas[], int ch) {
 			break;
 		}
 		pas[i] = t;
-		b = WriteConsole(h2, &star, 1, &d, 0);
-		
+		if (writeStar)
+			b = WriteConsole(h2, &star, 1, &d, 0);
+
 	}
 	b = WriteConsole(h2, endl, 1, &d, 0);
 	return b;
@@ -176,7 +176,7 @@ void tcharToInt(TCHAR t[], int& i) {
 void outputDigit(int digit) {
 
 	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
-	bool b;
+	BOOL b;
 	DWORD d;
 	TCHAR buf[256];
 	_stprintf_s(buf, _T("%d"), digit);
@@ -216,26 +216,31 @@ void workingWithConsole() {
 	_tprintf(_T("%d"),consoleMode);*/
 }
 
-void sevenTask(bool withEcho){
+void sevenTask(BOOL withEcho){
 	HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
 	HANDLE in = GetStdHandle(STD_INPUT_HANDLE);
+	TCHAR pass1[258];
 	if (out == INVALID_HANDLE_VALUE || in == INVALID_HANDLE_VALUE)
 	{
 		_tprintf(_T("error - %d\n"),GetLastError());
 		return;
 	}
 	writePromt(out, _T("Введите свой пароль:"));
-	if (!withEcho){
+	if (withEcho)
+	{
+		readPass(in, out, pass1, 256, FALSE);
+	}
+	else{
 		DWORD mode;
 		GetConsoleMode(in, &mode);
 		SetConsoleMode(in, mode & (~ENABLE_ECHO_INPUT) &(~ENABLE_LINE_INPUT));
 		GetConsoleMode(out, &mode);
 		SetConsoleMode(out, mode | ENABLE_ECHO_INPUT);
 		//printConsoleMode(out);
-		TCHAR pass1[258],pass2[258];
-		readPass(in, out, pass1, 256);
+		TCHAR pass2[258];
+		readPass(in, out, pass1, 256, TRUE);
 		writePromt(out, _T("Повторите ваш пароль:"));
-		readPass(in, out, pass2, 256);
+		readPass(in, out, pass2, 256, TRUE);
 		if (_tcslen(pass1) != _tcslen(pass2))
 		{
 			writePromt(out, _T("Пароли не совпадают"));
@@ -250,8 +255,21 @@ void sevenTask(bool withEcho){
 				return;
 			}
 		}
-
 	}
+	switch (checkPass(pass1)){
+		case GP_SUCCESS:
+			writePromt(out, _T("Пароль удачный"));
+			break;
+		case GP_IO:
+			writePromt(out, _T("?"));
+			break;
+		case GP_STRONG:
+			writePromt(out, _T("Пароль сложный"));
+			break;
+		case GP_REPEAT:
+			writePromt(out, _T("??"));
+			break;
+		}
 }
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -260,7 +278,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//checkMessageBox();
 	//checkErrors();
 	//workingWithConsole();
-	sevenTask(FALSE);
+	sevenTask(TRUE);
 	system("pause");
 }
 
