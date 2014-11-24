@@ -63,6 +63,19 @@ BOOL readPass(HANDLE h1, HANDLE h2, TCHAR pas[], int ch, BOOL writeStar) {
 	BOOL b;
 	for (int i = 0; i < ch - 1; i++) {
 		b = ReadConsole(h1, &t, 1, &d, 0);
+		if (t == '\b') {
+			CONSOLE_SCREEN_BUFFER_INFO pointer;
+			GetConsoleScreenBufferInfo(h2, &pointer);
+			pointer.dwCursorPosition.X -= 1;
+			SetConsoleCursorPosition(h2, pointer.dwCursorPosition);
+			WriteConsole(h2, _T(" "), 1, 0, 0);
+			SetConsoleCursorPosition(h2, pointer.dwCursorPosition);
+			i-=2;
+			if (i == 0)
+				i = -1;
+			pas[i+1] = '\0';
+			continue;
+		}
 		if (t == _T('\r\n')){
 			pas[i] = '\0';
 			break;
@@ -70,7 +83,6 @@ BOOL readPass(HANDLE h1, HANDLE h2, TCHAR pas[], int ch, BOOL writeStar) {
 		pas[i] = t;
 		if (writeStar)
 			b = WriteConsole(h2, &star, 1, &d, 0);
-
 	}
 	b = WriteConsole(h2, endl, 1, &d, 0);
 	return b;
@@ -258,17 +270,12 @@ void sevenTask(BOOL withEcho){
 	}
 	switch (checkPass(pass1)){
 		case GP_SUCCESS:
-			writePromt(out, _T("Пароль удачный"));
-			break;
-		case GP_IO:
-			writePromt(out, _T("?"));
+			writePromt(out, _T("Пароль строгий"));
 			break;
 		case GP_STRONG:
-			writePromt(out, _T("Пароль сложный"));
+			writePromt(out, _T("Пароль не строгий"));
 			break;
-		case GP_REPEAT:
-			writePromt(out, _T("??"));
-			break;
+
 		}
 }
 
@@ -278,9 +285,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	//checkMessageBox();
 	//checkErrors();
 	//workingWithConsole();
-	//sevenTask(TRUE);
-	int a = inputDigit();
-	outputDigit(a);
+	sevenTask(0);
+	//int a = inputDigit();
+	//outputDigit(a);
 	system("pause");
 }
 
