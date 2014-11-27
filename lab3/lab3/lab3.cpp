@@ -66,9 +66,13 @@ BOOL readPass(HANDLE h1, HANDLE h2, TCHAR pas[], int ch, BOOL writeStar) {
 		if (t[0] == '\b') {
 			CONSOLE_SCREEN_BUFFER_INFO pointer;
 			GetConsoleScreenBufferInfo(h2, &pointer);
+			if (pointer.dwCursorPosition.X == 0) {
+				pointer.dwCursorPosition.Y -= 1;
+				pointer.dwCursorPosition.X = pointer.dwMaximumWindowSize.X;
+			}
 			pointer.dwCursorPosition.X -= 1;
 			SetConsoleCursorPosition(h2, pointer.dwCursorPosition);
-			WriteConsole(h2, _T(" "), 1, 0, 0);
+			WriteConsole(h2, _T(""), 1, 0, 0);
 			SetConsoleCursorPosition(h2, pointer.dwCursorPosition);
 			i-=2;
 			if (i == 0)
