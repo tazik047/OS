@@ -169,10 +169,15 @@ void printConsoleMode(HANDLE h){
 
 void tcharToInt(TCHAR t[], int& i) {
 	i = 0;
+	bool isPositive = true;
 	int count = 0;
 	for (int k = 0; k < _tcslen(t); k++) {
 		if (t[k] == '\r') {
 			break;
+		}
+		if (t[k] == '-' && isPositive && k == 0) {
+			isPositive = false;
+			continue;
 		}
 		if (t[k] - '0'<0 || t[k] - '0'>9) {
 			printf("Не число!");
@@ -183,8 +188,10 @@ void tcharToInt(TCHAR t[], int& i) {
 	for (int j = 0; j < count; j++) {
 		i = i * 10 + (t[j] - '0');
 	}
+	if (!isPositive) {
+		i = -i;
+	}
 }
-
 void outputDigit(int digit) {
 
 	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -274,14 +281,24 @@ void sevenTask(BOOL withEcho){
 		}
 }
 
+void workingWithSevenTask() {
+	printf("Пароль с эхом или без? (1- да, 0 - нет, любые другие числа будут значить \"да\")\n");
+	int result = inputDigit();
+	if (result == 0) {
+		sevenTask(0);
+	}
+	else {
+		sevenTask(1);
+	}
+}
 int _tmain(int argc, _TCHAR* argv[])
 {
 	setlocale(LC_ALL, "Russian");
 	//checkMessageBox();
 	//checkErrors();
 	//workingWithConsole();
-	sevenTask(0);
+	//sevenTask(1);
 	//int a = inputDigit();
 	//outputDigit(a);
-	system("pause");
+	workingWithSevenTask();
 }
