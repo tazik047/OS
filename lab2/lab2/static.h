@@ -14,8 +14,11 @@
 extern "C"{
 #endif
 
-	RCA_crypt int __stdcall genKey(int &c, int&d);
-	RCA_crypt int __stdcall crypt(int a, int key, int n);
+	RCA_crypt long long __stdcall genkey(long long &d, long long &e);
+	RCA_crypt long long* __stdcall crypt(long long* a, long long key, long long n, int l);
+	RCA_crypt long long* __stdcall ToLong(char* a, int &l);
+	RCA_crypt char* __stdcall ToChar(long long* a, int l);
+
 #ifdef __cplusplus
 }
 #endif

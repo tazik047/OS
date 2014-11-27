@@ -1,3 +1,5 @@
 EXPORTS
-genKey
+genkey
 crypt
+ToLong
+ToChar
