@@ -58,16 +58,19 @@ BOOL writePromt(HANDLE h, TCHAR t[]) {
 
 BOOL readPass(HANDLE h1, HANDLE h2, TCHAR pas[], int ch, BOOL writeStar) {
 	TCHAR star = _T('*');
+	CONSOLE_SCREEN_BUFFER_INFO pointer;
+	GetConsoleScreenBufferInfo(h2, &pointer);
+	int y = pointer.dwCursorPosition.Y;
 	TCHAR endl[] = _T("\r\n");
 	DWORD d; TCHAR t[] = {'\0','\0'};
+
 	BOOL b;
 	for (int i = 0; i < ch - 1; i++) {
 		b = ReadConsole(h1, &t, 1, &d, 0);
 		if (t[0] == '\b') {
-			CONSOLE_SCREEN_BUFFER_INFO pointer;
 			GetConsoleScreenBufferInfo(h2, &pointer);
 			if (pointer.dwCursorPosition.X == 0) {
-				pointer.dwCursorPosition.Y -= 1;
+				pointer.dwCursorPosition.Y -= y == pointer.dwCursorPosition.Y?0:1;
 				pointer.dwCursorPosition.X = pointer.dwMaximumWindowSize.X;
 			}
 			pointer.dwCursorPosition.X -= 1;
