@@ -59,11 +59,11 @@ BOOL writePromt(HANDLE h, TCHAR t[]) {
 BOOL readPass(HANDLE h1, HANDLE h2, TCHAR pas[], int ch, BOOL writeStar) {
 	TCHAR star = _T('*');
 	TCHAR endl[] = _T("\r\n");
-	DWORD d; TCHAR t;
+	DWORD d; TCHAR t[] = {'\0','\0'};
 	BOOL b;
 	for (int i = 0; i < ch - 1; i++) {
 		b = ReadConsole(h1, &t, 1, &d, 0);
-		if (t == '\b') {
+		if (t[0] == '\b') {
 			CONSOLE_SCREEN_BUFFER_INFO pointer;
 			GetConsoleScreenBufferInfo(h2, &pointer);
 			pointer.dwCursorPosition.X -= 1;
@@ -76,11 +76,11 @@ BOOL readPass(HANDLE h1, HANDLE h2, TCHAR pas[], int ch, BOOL writeStar) {
 			pas[i+1] = '\0';
 			continue;
 		}
-		if (t == _T('\r\n')){
+		if (t[0] == _T('\r')){
 			pas[i] = '\0';
 			break;
 		}
-		pas[i] = t;
+		pas[i] = t[0];
 		if (writeStar)
 			b = WriteConsole(h2, &star, 1, &d, 0);
 	}
@@ -223,9 +223,6 @@ void workingWithConsole() {
 	if (!SetConsoleMode(hStdin, consoleMode)) 
 		printf("SetConsoleMode");
 	printConsoleMode(hStdin);
-	//inputDigit();
-	/*GetConsoleMode(hStdin, &consoleMode);
-	_tprintf(_T("%d"),consoleMode);*/
 }
 
 void sevenTask(BOOL withEcho){
@@ -271,7 +268,9 @@ void sevenTask(BOOL withEcho){
 		case GP_STRONG:
 			writePromt(out, _T("Пароль не строгий"));
 			break;
-
+		case GP_PASS:
+			writePromt(out, _T("Вы ввели неизвестный символ"));
+			break;
 		}
 }
 
