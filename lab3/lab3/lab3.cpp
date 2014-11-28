@@ -98,25 +98,34 @@ BOOL readPass(HANDLE h1, HANDLE h2, TCHAR pas[], int ch, BOOL writeStar) {
 //SecondTask
 int getFields(unsigned int extCode, int& code, int& subSystem, int& owner, int& error) {
 	code = extCode & 0xFFFF;
-	subSystem = (extCode >> 16) & 0xFFFF;
-	owner = (extCode >> 20) & 1;
+	subSystem = (extCode >> 16) & 0xFFF;
+	owner = (extCode >> 28) & 1;
 	error = (extCode >> 30) & 3;
 	return code;
 }
 //ThirdTask
 unsigned int getExtError(int code, int subSystem, int owner, int error) {
 	unsigned int result = error << 30;
-	result |= owner << 20;
+	result |= owner << 28;
 	result |= subSystem << 16;
 	result |= code;
 	return result;
 }
 bool checkErrors(){
-	unsigned int extError = (rand() << 17) | (rand() << 2) | rand() & 3;
-	int code, subSystem, owner, error;
-	getFields(extError, code, subSystem, owner, error);
-	unsigned int newError = getExtError(code, subSystem, owner, error);
-	return extError == newError;
+	bool result = true;
+	for (int i = 0; i <= 20; i++) {
+		unsigned int extError = (rand() << 17) | (rand() << 2) | rand() & 3;
+		int code, subSystem, owner, error;
+		getFields(extError, code, subSystem, owner, error);
+		unsigned int newError = getExtError(code, subSystem, owner, error);
+		if (extError == newError) {
+			printf("Ok\n");
+		}
+		else {
+			printf("Error\n");
+		}
+	}
+	return result;
 }
 //4TH TASK
 void checkMessageBox() {
@@ -302,7 +311,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	setlocale(LC_ALL, "Russian");
 	//checkMessageBox();
-	//checkErrors();
+	checkErrors();
 	//workingWithConsole();
 	//sevenTask(1);
 	//int a = inputDigit();
