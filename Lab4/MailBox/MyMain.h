@@ -1,3 +1,6 @@
+#include<iostream>
+
+
 void printError();
 
 BOOL StartMailBox();

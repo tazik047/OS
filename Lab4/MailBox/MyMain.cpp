@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include <Windows.h>
-#include <iostream>
 #include "MyMain.h"
 
 TCHAR path[] = _T("./mailbox/messages.dat");
