@@ -79,7 +79,7 @@ void MailBox::read()
 			LONG lPart = 0, hPart = 0;// указатель на начало файла
 			SetFilePointer (handle, lPart, &hPart, FILE_BEGIN);
 			DWORD Count=0;
-			ReadFile (handle, &messageCount, sizeof (int), &Count, 0);
+			ReadFile (handle, &messageCount, sizeof (int), &Count,0);
 			if (Count == 0) 
 			{
 				error(_T("1"));
