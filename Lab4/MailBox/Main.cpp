@@ -42,6 +42,10 @@ int _tmain(int argc, _TCHAR* argv[])
 			return 0;
 			break;
 		case 1:
+			TCHAR message[500];
+			_tprintf(_T("¬ведите текст сообщени€:\n"));
+			_tscanf_s(_T("%qs"), &message);
+			addNewMessage(message);
 			break;
 		case 2:
 			break;

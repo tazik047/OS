@@ -66,11 +66,51 @@ void getMailBoxInformation(){
 	if (read != 4){
 		printError();
 	}
-	_tprintf(_T("Количество байт, занятое сообщениями: %d\n"));
-	ReadFile(h, &bytes, 4, &read, 0);
+	_tprintf(_T("Количество байт, занятое сообщениями: %d\n"), bytes);
+	ReadFile(h, &max_message, 4, &read, 0);
 	if (read != 4){
 		printError();
 	}
-	_tprintf(_T("Максимальное количество сообщений: %d\n"));
+	_tprintf(_T("Максимальное количество сообщений: %d\n"), max_message);
 	_tprintf(_T("\n"));
+}
+
+void addNewMessage(TCHAR* mess){
+	int mas[3];
+	DWORD read;
+	resetPosition();
+	ReadFile(h, &mas, 4 * 3, &read, 0);
+	if (mas[0] == mas[2]){
+		_tprintf(_T("Ящик полон. Необходимо освободить почтовый ящик."));
+		return;
+	}
+	mas[0]++;
+	int mess_size = sizeof(TCHAR)*_tcslen(mess);
+	mas[1] += mess_size;
+	resetPosition();
+	WriteFile(h, &mas[0], 4, &read, 0);
+	if (read != 4){
+		printError();
+		return;
+	}
+
+	WriteFile(h, &mas[1], 4, &read, 0);
+	if (read != 4){
+		printError();
+		return;
+	}
+
+	SetFilePointer(h, 0, 0, FILE_END);
+	WriteFile(h, &mess_size, 4, &read, 0);
+	if (read != 4){
+		printError();
+		return;
+	}
+	WriteFile(h, &mess, mess_size, &read, 0);
+	if (read != mess_size){
+		printError();
+		return;
+	}
+
+	_tprintf(_T("Сообщение добавлено\n"));
 }
