@@ -6,7 +6,7 @@ TCHAR path[] = _T("./mailbox/messages.dat");
 HANDLE h;
 
 void printError(){
-	_tprintf(_T("Error, when writting in file\n"));
+	_tprintf(_T("Error, when writting in file1\n"));
 	return;
 }
 
