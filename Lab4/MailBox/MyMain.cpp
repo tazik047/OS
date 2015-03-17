@@ -75,6 +75,32 @@ void getMailBoxInformation(){
 	_tprintf(_T("\n"));
 }
 
+void doError(HANDLE h, int mas[],DWORD &read, int mess_size, TCHAR* mess, int mode){
+	switch (mode) {
+	case 0:
+		WriteFile(h, &mas[0], 4, &read, 0);
+		if (read != 4){
+			printError();
+			return;
+		}
+		break;
+	case 1:
+		WriteFile(h, &mess_size, 4, &read, 0);
+		if (read != 4){
+			printError();
+			return;
+		}
+		break;
+	case 2:
+		WriteFile(h, &mess, mess_size, &read, 0);
+		if (read != mess_size){
+			printError();
+			return;
+		}
+		break;
+	}
+}
+
 void addNewMessage(TCHAR* mess){
 	int mas[3];
 	DWORD read;
@@ -88,29 +114,11 @@ void addNewMessage(TCHAR* mess){
 	int mess_size = sizeof(TCHAR)*_tcslen(mess);
 	mas[1] += mess_size;
 	resetPosition();
-	WriteFile(h, &mas[0], 4, &read, 0);
-	if (read != 4){
-		printError();
-		return;
-	}
-
-	WriteFile(h, &mas[1], 4, &read, 0);
-	if (read != 4){
-		printError();
-		return;
-	}
-
+	doError(h, &mas[1], read, mess_size, mess,0);
+	doError(h, &mas[1], read, mess_size,mess,0);
 	SetFilePointer(h, 0, 0, FILE_END);
-	WriteFile(h, &mess_size, 4, &read, 0);
-	if (read != 4){
-		printError();
-		return;
-	}
-	WriteFile(h, &mess, mess_size, &read, 0);
-	if (read != mess_size){
-		printError();
-		return;
-	}
-
+	doError(h, &mas[1], read, mess_size, mess, 1);
+	doError(h, &mas[1], read, mess_size, mess, 2);
 	_tprintf(_T("Сообщение добавлено\n"));
 }
+
