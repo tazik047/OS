@@ -54,11 +54,16 @@ int _tmain(int argc, _TCHAR* argv[])
 
 			break;
 		case 3:
+			_tprintf(_T("Введите индекс для удаления:\n"));
+			int index;
+			fflush(stdin);
+			scanf("%d", &index);
+			deleteTheMessage(index);
 			break;
 		case 4:
 			break;
 		case 5:
-			getMailBoxInformation();
+			printTheInfo();
 			break;
 		}
 

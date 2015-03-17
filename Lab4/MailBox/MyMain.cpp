@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include "MyMain.h"
 
+DWORD count, bytes, max_message, read;
 TCHAR path[] = _T("./mailbox/messages.dat");
 HANDLE h;
 
@@ -47,32 +48,35 @@ BOOL StartMailBox(){
 
 void resetPosition(){
 	SetFilePointer(h, 0, 0, FILE_BEGIN);
+	
 }
 
 void ExitFromMailBox(){
 	CloseHandle(h);
 }
 
+void printTheInfo() {
+	getMailBoxInformation();
+	_tprintf(_T("\nИнформация о почтовом ящике:\n"));
+	_tprintf(_T("Количество сообщений в ящике: %d\n"), count);
+	_tprintf(_T("Количество байт, занятое сообщениями: %d\n"), bytes);
+	_tprintf(_T("Максимальное количество сообщений: %d\n"), max_message);
+	_tprintf(_T("\n"));
+}
 void getMailBoxInformation(){
 	resetPosition();
-	_tprintf(_T("\nИнформация о почтовом ящике:\n"));
-	DWORD count, bytes, max_message, read;
 	ReadFile(h, &count, 4, &read, 0);
 	if (read != 4){
 		printError();
 	}
-	_tprintf(_T("Количество сообщений в ящике: %d\n"), count);
 	ReadFile(h, &bytes, 4, &read, 0);
 	if (read != 4){
 		printError();
 	}
-	_tprintf(_T("Количество байт, занятое сообщениями: %d\n"), bytes);
 	ReadFile(h, &max_message, 4, &read, 0);
 	if (read != 4){
 		printError();
 	}
-	_tprintf(_T("Максимальное количество сообщений: %d\n"), max_message);
-	_tprintf(_T("\n"));
 }
 
 void addNewMessage(TCHAR* mess){
@@ -113,4 +117,22 @@ void addNewMessage(TCHAR* mess){
 	}
 
 	_tprintf(_T("Сообщение добавлено\n"));
+}
+
+void deleteTheMessage(int index) {
+	getMailBoxInformation();
+	if (index > count) {
+		_tprintf(_T("You can't delete unexisting info\n"));
+		return;
+	}
+	else {
+		DWORD nothingMeans;
+		int count = 0;
+		while (ReadFile(h, &nothingMeans, 4, &read, 0)) {
+			if (count == index) {
+
+			}
+			count++;
+		}
+	}
 }
