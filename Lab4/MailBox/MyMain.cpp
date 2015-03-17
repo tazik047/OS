@@ -3,6 +3,7 @@
 #include "MyMain.h"
 
 DWORD count, bytes, max_message, read;
+int mas[3];
 TCHAR path[] = _T("./mailbox/messages.dat");
 HANDLE h;
 
@@ -80,7 +81,6 @@ void getMailBoxInformation(){
 }
 
 void addNewMessage(TCHAR* mess){
-	int mas[3];
 	DWORD read;
 	resetPosition();
 	ReadFile(h, &mas, 4 * 3, &read, 0);
@@ -124,15 +124,27 @@ void deleteTheMessage(int index) {
 	if (index > count) {
 		_tprintf(_T("You can't delete unexisting info\n"));
 		return;
-	}
+	} //идея такая: считывать все. СМСки запихивать в массив. Дойдя до удаляемого - вычитать его размер и изменить количество сообщений.
+	// потом все перезаписать от начала и до конца. проблема в конвертации
 	else {
-		DWORD nothingMeans;
-		int count = 0;
-		while (ReadFile(h, &nothingMeans, 4, &read, 0)) {
-			if (count == index) {
-
+		resetPosition();
+		TCHAR** arr = new TCHAR*[count + 2];
+		TCHAR* smthMeans;
+		int counter = 0;
+		boolean wasnt = true;
+		while (ReadFile(h, &smthMeans, 4, &read, 0)) {
+			if (counter == index && wasnt) {
+				count = count - 1;
+				bytes = bytes - sizeof(TCHAR)*_tcslen(smthMeans);
+				wasnt = false;
+				continue;
 			}
-			count++;
+			arr[counter] = smthMeans;
+			counter++;
 		}
+		for (int i = 0; i < count + 3; i++) {
+
+		}
+
 	}
 }
