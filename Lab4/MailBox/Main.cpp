@@ -41,13 +41,17 @@ int _tmain(int argc, _TCHAR* argv[])
 		case 0:
 			return 0;
 			break;
-		case 1:
-			TCHAR message[500];
+		case 1:			
 			_tprintf(_T("¬ведите текст сообщени€:\n"));
-			_tscanf_s(_T("%qs"), &message);
+			char temp[501];
+			fflush(stdin);
+			scanf("%[^\r\n]", &temp);
+			TCHAR message[501];
+			OemToChar(temp, message);
 			addNewMessage(message);
 			break;
 		case 2:
+
 			break;
 		case 3:
 			break;
