@@ -196,6 +196,8 @@ void deleteTheMessage(int index) {
 }
 
 void clearTheMailBox() {
-	DeleteFile(path);
+	resetPosition();
+	SetEndOfFile(h);
+	CloseHandle(h);
 	StartMailBox();
 }
