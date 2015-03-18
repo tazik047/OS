@@ -4,27 +4,21 @@
 #include "CRC.h"
 
 
+BOOL CtrlHandler(DWORD fdwCtrlType)
+{
+	switch (fdwCtrlType)
+	{
+		case CTRL_CLOSE_EVENT:
+		case CTRL_SHUTDOWN_EVENT:
+			ExitFromMailBox();
+			return FALSE;
+	}
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
-	/*
-	MailBox::setFolder(_T("./mailbox"));
-	MailBox* mail = new MailBox(_T("myMails"),1000);
-	Message* m1 = new Message(_T("Hallo,I'm Ira"));
-	Message* m2 = new Message(_T("Today is Monday"));
-	Message* m3 = new Message(_T("Heute ist Montag"));
-
-	mail->add(*m1);
-	mail->add(*m2);
-	mail->add(*m3);*/
-
-	//mail->readWithMap();
-	//mail->deleteByIndex(1);
-	//mail->deleteAllMessages();//смотреть в дэбаггере
-	//int i = mail->contrSum();
-	//printf("sum" + i);
-
 	_tsetlocale(LC_ALL, _T("Russian"));
-
+	SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE);
 	if (!StartMailBox())
 		return 0;
 	_tprintf(_T("Для работы с почтовым ящиком введите номер предложенной команды:\n"));
@@ -42,7 +36,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		case 0:
 			ExitFromMailBox();
 			break;
-		case 1:			
+		case 1:
 			_tprintf(_T("Введите текст сообщения:\n"));
 			char temp[501];
 			fflush(stdin);

@@ -4,7 +4,6 @@
 #include "CRC.h"
 
 DWORD count, bytes, max_message, read;
-int mas[3];
 TCHAR path[] = _T("./mailbox/messages.dat");
 HANDLE h;
 
@@ -20,29 +19,28 @@ BOOL StartMailBox(){
 		return FALSE;
 	}
 	DWORD  max, t = GetFileSize(h, &max);
-	if (t == 0 && max==0){
-		DWORD written;
+	if (t == 0 && max == 0){
 		DWORD zero = 0;
-		WriteFile(h, &zero, 4, &written, 0);
-		if (written != 4){
+		WriteFile(h, &zero, 4, &read, 0);
+		if (read != 4){
 			printError();
 			return FALSE;
 		}
-		WriteFile(h, &zero, 4, &written, 0);
-		if (written != 4){
+		WriteFile(h, &zero, 4, &read, 0);
+		if (read != 4){
 			printError();
 			return FALSE;
 		}
 		_tprintf(_T("Для вас будет создан почтовый ящик\nВведите макисмальное количество сообщений, которое можно хранить в нем:\n"));
 		size_t maxCount;
 		std::cin >> maxCount;
-		WriteFile(h, &maxCount, 4, &written, 0);
-		if (written != 4){
+		WriteFile(h, &maxCount, 4, &read, 0);
+		if (read != 4){
 			printError();
 			return FALSE;
 		}
 	}
-	else if(!validate(h)){
+	else if (!validate(h)){
 		_tprintf(_T("Файл испорчен!!!\n"));
 		return FALSE;
 	}
@@ -53,7 +51,6 @@ BOOL StartMailBox(){
 
 void resetPosition(){
 	SetFilePointer(h, 0, 0, FILE_BEGIN);
-
 }
 
 void ExitFromMailBox(){
@@ -69,6 +66,7 @@ void printTheInfo() {
 	_tprintf(_T("Максимальное количество сообщений: %d\n"), max_message);
 	_tprintf(_T("\n"));
 }
+
 void getMailBoxInformation(){
 	resetPosition();
 	ReadFile(h, &count, 4, &read, 0);
@@ -86,8 +84,8 @@ void getMailBoxInformation(){
 }
 
 void addNewMessage(TCHAR* mess){
-	DWORD read;
 	resetPosition();
+	int mas[3];
 	ReadFile(h, &mas, 4 * 3, &read, 0);
 	if (mas[0] == mas[2]){
 		_tprintf(_T("Ящик полон. Необходимо освободить почтовый ящик."));
@@ -125,21 +123,20 @@ void addNewMessage(TCHAR* mess){
 }
 
 void ReadMessage(int index){
-	resetPosition();
 	getMailBoxInformation();
-	if (index > count) {
+	if (index >= count) {
 		_tprintf(_T("You can't read unexisting info\n"));
 		return;
 	}
-	DWORD smthMeans;
+	DWORD message_size;
 	TCHAR* message;
 	int counter = 0;
-	while (ReadFile(h, &smthMeans, 4, &read, 0)) {
-	message = new TCHAR[smthMeans / sizeof(TCHAR) + 1];
-		ReadFile(h, message, smthMeans, &read, 0);
-		message[smthMeans / sizeof(TCHAR)] = '\0';
+	while (ReadFile(h, &message_size, 4, &read, 0)) {
+		message = new TCHAR[message_size / sizeof(TCHAR)+1];
+		ReadFile(h, message, message_size, &read, 0);
+		message[message_size / sizeof(TCHAR)] = '\0';
 		if (counter == index) {
-			_tprintf(_T("Сообщение № %d:\n%s\nРазмер сообщения:%d\n"), index, message, smthMeans);
+			_tprintf(_T("Сообщение № %d:\n%s\nРазмер сообщения:%d\n"), index, message, message_size);
 			return;
 		}
 		counter++;
@@ -149,29 +146,29 @@ void ReadMessage(int index){
 
 void deleteTheMessage(int index) {
 	getMailBoxInformation();
-	if (index > count) {
+	if (index >= count) {
 		_tprintf(_T("You can't delete unexisting info\n"));
 		return;
 	}
 	resetPosition();
-	int smthMeans;
+	int message_size;
 	TCHAR* message;
 	int counter = 0;
-	while (ReadFile(h, &smthMeans, 4, &read, 0)) {
+	while (ReadFile(h, &message_size, 4, &read, 0)) {
 		if (counter == index) {
 			count = count - 1;
-			bytes -= smthMeans;
+			bytes -= message_size;
 			break;
 		}
-		ReadFile(h, &message, smthMeans, &read, 0);
+		ReadFile(h, &message, message_size, &read, 0);
 		counter++;
 	}
-	int prev_size_message = smthMeans;
-	while (ReadFile(h, &smthMeans, 4, &read, 0)){
-		ReadFile(h, &message, smthMeans, &read, 0);
-		SetFilePointer(h, -(smthMeans + prev_size_message + 8), 0, FILE_CURRENT);
-		WriteFile(h, &smthMeans, 4, &read, 0);
-		WriteFile(h, &message, smthMeans, &read, 0);
+	int prev_size_message = message_size;
+	while (ReadFile(h, &message_size, 4, &read, 0)){
+		ReadFile(h, &message, message_size, &read, 0);
+		SetFilePointer(h, -(message_size + prev_size_message + 8), 0, FILE_CURRENT);
+		WriteFile(h, &message_size, 4, &read, 0);
+		WriteFile(h, &message, message_size, &read, 0);
 		SetFilePointer(h, prev_size_message + 4, 0, FILE_CURRENT);
 	}
 	SetEndOfFile(h);
