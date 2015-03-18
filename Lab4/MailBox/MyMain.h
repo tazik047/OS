@@ -13,4 +13,6 @@ void addNewMessage(TCHAR* mess);
 
 void deleteTheMessage(int index);
 
+void ReadMessage(int index);
+
 void printTheInfo();

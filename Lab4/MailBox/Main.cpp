@@ -51,7 +51,11 @@ int _tmain(int argc, _TCHAR* argv[])
 			addNewMessage(message);
 			break;
 		case 2:
-
+			_tprintf(_T("¬ведите индекс сообщени€:\n"));
+			int index1;
+			fflush(stdin);
+			scanf("%d", &index1);
+			ReadMessage(index1);
 			break;
 		case 3:
 			_tprintf(_T("¬ведите индекс дл€ удалени€:\n"));

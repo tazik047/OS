@@ -49,7 +49,7 @@ BOOL StartMailBox(){
 
 void resetPosition(){
 	SetFilePointer(h, 0, 0, FILE_BEGIN);
-	
+
 }
 
 void ExitFromMailBox(){
@@ -110,13 +110,35 @@ void addNewMessage(TCHAR* mess){
 		printError();
 		return;
 	}
-	WriteFile(h, &mess, mess_size, &read, 0);
+	WriteFile(h, mess, mess_size, &read, 0);
 	if (read != mess_size){
 		printError();
 		return;
 	}
 
 	_tprintf(_T("Сообщение добавлено\n"));
+}
+
+void ReadMessage(int index){
+	resetPosition();
+	getMailBoxInformation();
+	if (index > count) {
+		_tprintf(_T("You can't delete unexisting info\n"));
+		return;
+	}
+	DWORD smthMeans;
+	TCHAR* message;
+	int counter = 0;
+	while (ReadFile(h, &smthMeans, 4, &read, 0)) {
+	message = new TCHAR[smthMeans / sizeof(TCHAR)];
+		ReadFile(h, message, smthMeans, &read, 0);
+		if (counter == index) {
+			_tprintf(_T("Сообщение № %d:\n%s\nРазмер сообщения:%d\n"), index, message, smthMeans);
+			return;
+		}
+		counter++;
+		delete message;
+	}
 }
 
 void deleteTheMessage(int index) {
@@ -126,25 +148,26 @@ void deleteTheMessage(int index) {
 		return;
 	} //идея такая: считывать все. СМСки запихивать в массив. Дойдя до удаляемого - вычитать его размер и изменить количество сообщений.
 	// потом все перезаписать от начала и до конца. проблема в конвертации
-	else {
-		resetPosition();
-		TCHAR** arr = new TCHAR*[count + 2];
-		TCHAR* smthMeans;
-		int counter = 0;
-		boolean wasnt = true;
-		while (ReadFile(h, &smthMeans, 4, &read, 0)) {
-			if (counter == index && wasnt) {
-				count = count - 1;
-				bytes = bytes - sizeof(TCHAR)*_tcslen(smthMeans);
-				wasnt = false;
-				continue;
-			}
-			arr[counter] = smthMeans;
-			counter++;
+	resetPosition();
+	int smthMeans;
+	TCHAR* message;
+	int counter = 0;
+	while (ReadFile(h, &smthMeans, 4, &read, 0)) {
+		if (counter == index) {
+			count = count - 1;
+			bytes -= smthMeans;
+			break;
 		}
-		for (int i = 0; i < count + 3; i++) {
-
-		}
-
+		ReadFile(h, &message, smthMeans, &read, 0);
+		counter++;
 	}
+	int prev_size_message = smthMeans;
+	while (ReadFile(h, &smthMeans, 4, &read, 0)){
+		ReadFile(h, &message, smthMeans, &read, 0);
+		SetFilePointer(h, -(smthMeans + prev_size_message + 8), 0, FILE_CURRENT);
+		WriteFile(h, &smthMeans, 4, &read, 0);
+		WriteFile(h, &message, smthMeans, &read, 0);
+		SetFilePointer(h, prev_size_message + 4, 0, FILE_CURRENT);
+	}
+	SetEndOfFile(h);
 }
