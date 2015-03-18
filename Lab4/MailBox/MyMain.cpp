@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include <Windows.h>
 #include "MyMain.h"
+#include "CRC.h"
 
 DWORD count, bytes, max_message, read;
 int mas[3];
@@ -18,9 +19,8 @@ BOOL StartMailBox(){
 		_tprintf(_T("Error when creating/open files\n"));
 		return FALSE;
 	}
-	DWORD  max;
-	size_t t = GetFileSize(h, &max);
-	if (t == 0){
+	DWORD  max, t = GetFileSize(h, &max);
+	if (t == 0 && max==0){
 		DWORD written;
 		DWORD zero = 0;
 		WriteFile(h, &zero, 4, &written, 0);
@@ -42,6 +42,10 @@ BOOL StartMailBox(){
 			return FALSE;
 		}
 	}
+	else if(!validate(h)){
+		_tprintf(_T("Файл испорчен!!!\n"));
+		return FALSE;
+	}
 	return TRUE;
 }
 
@@ -53,6 +57,7 @@ void resetPosition(){
 }
 
 void ExitFromMailBox(){
+	createCRC(h);
 	CloseHandle(h);
 }
 
@@ -123,7 +128,7 @@ void ReadMessage(int index){
 	resetPosition();
 	getMailBoxInformation();
 	if (index > count) {
-		_tprintf(_T("You can't delete unexisting info\n"));
+		_tprintf(_T("You can't read unexisting info\n"));
 		return;
 	}
 	DWORD smthMeans;
@@ -146,8 +151,7 @@ void deleteTheMessage(int index) {
 	if (index > count) {
 		_tprintf(_T("You can't delete unexisting info\n"));
 		return;
-	} //идея такая: считывать все. СМСки запихивать в массив. Дойдя до удаляемого - вычитать его размер и изменить количество сообщений.
-	// потом все перезаписать от начала и до конца. проблема в конвертации
+	}
 	resetPosition();
 	int smthMeans;
 	TCHAR* message;

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "MailBox.h"
 #include "MyMain.h"
+#include "CRC.h"
 
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -39,7 +40,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		switch (c)
 		{
 		case 0:
-			return 0;
+			ExitFromMailBox();
 			break;
 		case 1:			
 			_tprintf(_T("Введите текст сообщения:\n"));
@@ -72,7 +73,6 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 
 	}
-	ExitFromMailBox();
 	_tprintf(_T("Пока\n"));
 	//system("pause");
 	return 0;
