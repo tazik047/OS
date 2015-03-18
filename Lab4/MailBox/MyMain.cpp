@@ -147,29 +147,38 @@ void ReadMessage(int index){
 void deleteTheMessage(int index) {
 	getMailBoxInformation();
 	if (index >= count) {
-		_tprintf(_T("You can't delete unexisting info\n"));
+		_tprintf(_T("You can't read unexisting info\n"));
 		return;
 	}
-	resetPosition();
 	int message_size;
 	TCHAR* message;
 	int counter = 0;
 	while (ReadFile(h, &message_size, 4, &read, 0)) {
+		message = new TCHAR[message_size / sizeof(TCHAR) + 1];
+		ReadFile(h, message, message_size, &read, 0);
+		message[message_size / sizeof(TCHAR)] = '\0';
 		if (counter == index) {
-			count = count - 1;
 			bytes -= message_size;
+			count--;
 			break;
 		}
-		ReadFile(h, &message, message_size, &read, 0);
 		counter++;
+		delete message;
 	}
 	int prev_size_message = message_size;
-	while (ReadFile(h, &message_size, 4, &read, 0)){
-		ReadFile(h, &message, message_size, &read, 0);
+	SetFilePointer(h, index, 0, FILE_BEGIN);
+	while (ReadFile(h, &message_size, 4, &read, 0))
+	{
+	}
+	/*while (ReadFile(h, &message_size, 4, &read, 0)){
+		message = new TCHAR[message_size / sizeof(TCHAR) + 1];
+		ReadFile(h, message, message_size, &read, 0);
+		message[message_size / sizeof(TCHAR)] = '\0';
 		SetFilePointer(h, -(message_size + prev_size_message + 8), 0, FILE_CURRENT);
 		WriteFile(h, &message_size, 4, &read, 0);
 		WriteFile(h, &message, message_size, &read, 0);
 		SetFilePointer(h, prev_size_message + 4, 0, FILE_CURRENT);
-	}
+	}*/
+
 	SetEndOfFile(h);
 }
