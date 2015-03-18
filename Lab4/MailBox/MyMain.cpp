@@ -175,7 +175,6 @@ void deleteTheMessage(int index) {
 		WriteFile(h, &message_size, 4, &read, 0);
 		WriteFile(h, message, message_size, &read, 0);
 		SetFilePointer(h, prev_size_message + 4, 0, FILE_CURRENT);
-		delete message;
 	}
 	SetFilePointer(h, -(prev_size_message + 4), 0, FILE_END);
 	SetEndOfFile(h);
