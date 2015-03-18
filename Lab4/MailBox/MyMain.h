@@ -16,3 +16,5 @@ void deleteTheMessage(int index);
 void ReadMessage(int index);
 
 void printTheInfo();
+
+void clearTheMailBox();

@@ -60,6 +60,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			deleteTheMessage(index);
 			break;
 		case 4:
+			clearTheMailBox();
 			break;
 		case 5:
 			printTheInfo();
