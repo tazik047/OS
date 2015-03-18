@@ -135,8 +135,9 @@ void ReadMessage(int index){
 	TCHAR* message;
 	int counter = 0;
 	while (ReadFile(h, &smthMeans, 4, &read, 0)) {
-	message = new TCHAR[smthMeans / sizeof(TCHAR)];
+	message = new TCHAR[smthMeans / sizeof(TCHAR) + 1];
 		ReadFile(h, message, smthMeans, &read, 0);
+		message[smthMeans / sizeof(TCHAR)] = '\0';
 		if (counter == index) {
 			_tprintf(_T("Сообщение № %d:\n%s\nРазмер сообщения:%d\n"), index, message, smthMeans);
 			return;
