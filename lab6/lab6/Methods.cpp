@@ -1,33 +1,44 @@
 #include "stdafx.h"
 #include <vector>
 #include <Windows.h>
+#include "Methods.h"
 
 using namespace std;
 
-struct memPage {
+/*PROBLEMS:
+* 1. немного запуталась в SIZE_T/BYTE :( или вообще все равно?
+*
+* 2. не забыть поменять %d на %x (Мельникова говорила в hex системе. Хотя мне удобнее в 10-й проверять)
+*/
+
+struct memPages {
 	LPVOID address;
-	BYTE size;
+	SIZE_T sizePages;
 };
 
-void getMemoryInfo()
-{
-	//на второй таск
-	vector<memPage> freeMem; // case mbi.State & MEM_FREE
-	vector<memPage> commitMem; // case mbi.State & MEM_COMMIT
+vector<memPages> freeMem;
+vector<memPages> commitMem;
 
+MEMORY_BASIC_INFORMATION mb;
+SIZE_T dwLength = sizeof(mb);
+HANDLE h = GetCurrentProcess();
+
+SIZE_T bestSuitedSize, bestSuitedIndex;
+LPVOID start, stop;
+
+void getSystemInfo() {
 	SYSTEM_INFO sinf;
 	GetSystemInfo(&sinf);
 
-	LPVOID start = sinf.lpMinimumApplicationAddress;
-	LPVOID stop = sinf.lpMaximumApplicationAddress;
+	start = sinf.lpMinimumApplicationAddress;
+	stop = sinf.lpMaximumApplicationAddress;
+}
 
-	MEMORY_BASIC_INFORMATION mb;
-	SIZE_T dwLength = sizeof(mb);
-	HANDLE h = GetCurrentProcess();
-
+void getMemoryInfo()
+{
 	while ((unsigned)start < (unsigned)stop)
 	{
-		// Технически, можно юзать VirtualQueryEx
+		// Технически, можно юзать VirtualQuery
 		VirtualQueryEx(h, start, &mb, dwLength);
 
 		// Я не помню какую именно инфу выводить. Пока пусть будет так
@@ -49,7 +60,7 @@ void getMemoryInfo()
 		}
 		_tprintf(_T("\n"));
 
-		// Тип не всегда отображается. Походу, кроме этих трех, еще какой-то тип есть
+		// Тип не всегда отображается, не знаю почему
 		_tprintf(_T("Type: "));
 		switch (mb.Type) {
 		case MEM_IMAGE:
@@ -67,4 +78,112 @@ void getMemoryInfo()
 
 		start = (BYTE*)start + mb.RegionSize;
 	}
+}
+
+void fillVectors()
+{
+	while ((unsigned)start < (unsigned)stop)
+	{
+		VirtualQueryEx(h, start, &mb, dwLength);
+
+		switch (mb.State)
+		{
+		case MEM_FREE:
+			memPages freePage;
+			freePage.address = start;
+			freePage.sizePages = mb.RegionSize;
+			freeMem.push_back(freePage);
+			break;
+		case MEM_COMMIT:
+			memPages commitPage;
+			commitPage.address = start;
+			commitPage.sizePages = mb.RegionSize;
+			commitMem.push_back(commitPage);
+			break;
+		}
+		start = (BYTE*)start + mb.RegionSize;
+	}
+
+	// Вывод списков на консоль
+	printCommitPage();
+	printFreeMem();
+}
+
+////////////////Выделение памяти для added
+void theLeastSufficientAdd(SIZE_T added) {
+	getSystemInfo();
+	fillVectors();
+
+	bestSuitedSize = freeMem[0].sizePages;
+	bestSuitedIndex = 0;
+
+	// Ищем куда добавить
+	for (int i = 1; i < freeMem.size(); i++)
+	{
+		if ((freeMem[i].sizePages >= added) && (freeMem[i].sizePages < bestSuitedSize))
+		{
+			bestSuitedSize = freeMem[i].sizePages;
+			bestSuitedIndex = i;
+		}
+	}
+
+	_tprintf(_T("\nbestSuitedSize = %d bestSuitedIndex = %d\n\n"), bestSuitedSize, bestSuitedIndex);
+
+	//Добавляем новый элемент в коммитМем
+	memPages temp;
+	temp.address = freeMem[bestSuitedIndex].address;
+	temp.sizePages = added;
+	commitMem.push_back(temp);
+
+	// меняем элемент в фриМем
+	freeMem[bestSuitedIndex].address = (BYTE*)freeMem[bestSuitedIndex].address + added;
+	freeMem[bestSuitedIndex].sizePages -= added;
+	if (freeMem[bestSuitedIndex].sizePages == 0)
+		freeMem.erase(freeMem.begin() + bestSuitedIndex);
+
+	// Вывод на консоль freeMem после выделения памяти
+	printFreeMem();
+}
+
+// Тут трудно угадать с адресом, т.к. он меняется постоянно. Лучшего варианта не придумала пока
+void theLeastSufficientDelete(SIZE_T elem)
+{
+	getSystemInfo();
+	fillVectors();
+
+	_tprintf(_T("DELETING. Address: %d Size: %d\n\n"), commitMem[elem].address, commitMem[elem].sizePages);
+	LPVOID del = commitMem[elem].address;
+
+
+	for (int i = 1; i < commitMem.size(); i++)
+	{
+		if (commitMem[i].address == del)
+		{
+			memPages freePage;
+			freePage.address = commitMem[i].address;
+			freePage.sizePages = commitMem[i].sizePages;
+			freeMem.push_back(freePage);
+
+			commitMem.erase(commitMem.begin() + i);
+			break;
+		}
+	}
+	printCommitPage();
+	printFreeMem();
+}
+
+void printFreeMem() {
+	_tprintf(_T("MEM_FREE\n"));
+	for (int i = 0; i < freeMem.size(); i++){
+		_tprintf(_T("Address: %d Size: %d\n"), freeMem[i].address, freeMem[i].sizePages);
+	}
+	_tprintf(_T("\n"));
+}
+
+void printCommitPage() {
+	_tprintf(_T("MEM_COMMIT\n"));
+	for (int i = 0; i < commitMem.size(); i++){
+		_tprintf(_T("Address: %d Size: %d\n"), commitMem[i].address, commitMem[i].sizePages);
+	}
+	_tprintf(_T("\n"));
 }
