@@ -36,6 +36,7 @@ void getSystemInfo() {
 
 void getMemoryInfo()
 {
+	getSystemInfo();
 	while ((unsigned)start < (unsigned)stop)
 	{
 		// Технически, можно юзать VirtualQuery
@@ -89,23 +90,23 @@ void fillVectors()
 		switch (mb.State)
 		{
 		case MEM_FREE:
-			memPages freePage;
-			freePage.address = start;
-			freePage.sizePages = mb.RegionSize;
-			freeMem.push_back(freePage);
+			memPages freePages;
+			freePages.address = start;
+			freePages.sizePages = mb.RegionSize;
+			freeMem.push_back(freePages);
 			break;
 		case MEM_COMMIT:
-			memPages commitPage;
-			commitPage.address = start;
-			commitPage.sizePages = mb.RegionSize;
-			commitMem.push_back(commitPage);
+			memPages commitPages;
+			commitPages.address = start;
+			commitPages.sizePages = mb.RegionSize;
+			commitMem.push_back(commitPages);
 			break;
 		}
 		start = (BYTE*)start + mb.RegionSize;
 	}
 
 	// Вывод списков на консоль
-	printCommitPage();
+	printCommitMem();
 	printFreeMem();
 }
 
@@ -145,7 +146,7 @@ void theLeastSufficientAdd(SIZE_T added) {
 	printFreeMem();
 }
 
-// Тут трудно угадать с адресом, т.к. он меняется постоянно. Лучшего варианта не придумала пока
+// Удалять нужно по адресу, но его трудно угадать, т.к. он меняется постоянно
 void theLeastSufficientDelete(SIZE_T elem)
 {
 	getSystemInfo();
@@ -168,22 +169,22 @@ void theLeastSufficientDelete(SIZE_T elem)
 			break;
 		}
 	}
-	printCommitPage();
+	printCommitMem();
 	printFreeMem();
 }
 
 void printFreeMem() {
 	_tprintf(_T("MEM_FREE\n"));
 	for (int i = 0; i < freeMem.size(); i++){
-		_tprintf(_T("Address: %d Size: %d\n"), freeMem[i].address, freeMem[i].sizePages);
+		_tprintf(_T("%d. Address: %d Size: %d\n"), i, freeMem[i].address, freeMem[i].sizePages);
 	}
 	_tprintf(_T("\n"));
 }
 
-void printCommitPage() {
+void printCommitMem() {
 	_tprintf(_T("MEM_COMMIT\n"));
 	for (int i = 0; i < commitMem.size(); i++){
-		_tprintf(_T("Address: %d Size: %d\n"), commitMem[i].address, commitMem[i].sizePages);
+		_tprintf(_T("%d. Address: %d Size: %d\n"), i, commitMem[i].address, commitMem[i].sizePages);
 	}
 	_tprintf(_T("\n"));
 }

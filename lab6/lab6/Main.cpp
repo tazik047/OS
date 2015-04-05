@@ -5,10 +5,9 @@
 int _tmain(int argc, _TCHAR* argv[])
 {
 
-
-	//getMemoryInfo(start, stop);
-	//theLeastSufficientAdd(4096);
-	theLeastSufficientDelete(5);
+	getMemoryInfo();
+	//theLeastSufficientAdd(4097);
+	//theLeastSufficientDelete(5);
 
 	return 0;
 }

@@ -11,7 +11,7 @@ void theLeastSufficientAdd(SIZE_T added);
 
 void theLeastSufficientDelete(SIZE_T del);
 
-void printCommitPage();
+void printCommitMem();
 
 void printFreeMem();
 
