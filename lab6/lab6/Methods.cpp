@@ -6,24 +6,23 @@
 using namespace std;
 
 /*PROBLEMS:
-* 1. немного запуталась в SIZE_T/BYTE :( или вообще все равно?
 *
 * 2. не забыть помен€ть %d на %x (ћельникова говорила в hex системе. ’от€ мне удобнее в 10-й провер€ть)
 */
 
 struct memPages {
 	LPVOID address;
-	SIZE_T sizePages;
+	BYTE sizePages;
 };
 
 vector<memPages> freeMem;
 vector<memPages> commitMem;
 
 MEMORY_BASIC_INFORMATION mb;
-SIZE_T dwLength = sizeof(mb);
+BYTE dwLength = sizeof(mb);
 HANDLE h = GetCurrentProcess();
 
-SIZE_T bestSuitedSize, bestSuitedIndex;
+BYTE bestSuitedSize, bestSuitedIndex;
 LPVOID start, stop;
 
 void getSystemInfo() {
@@ -32,6 +31,19 @@ void getSystemInfo() {
 
 	start = sinf.lpMinimumApplicationAddress;
 	stop = sinf.lpMaximumApplicationAddress;
+}
+
+void printVirtualMemoryInfo() {
+	MEMORYSTATUS ms;
+	ms.dwLength = sizeof(ms);
+	GlobalMemoryStatus(&ms);
+	printf("dwMemoryLodad = %d/n", ms.dwMemoryLoad);
+	printf("dwTotalPhys = %08x/n", ms.dwTotalPhys);
+	printf("dwAvailPhys = %08x/n", ms.dwAvailPhys);
+	printf("dwTotalPageFile = %08x/n", ms.dwTotalPageFile);
+	printf("dwAvailPageFile = %08x/n", ms.dwAvailPageFile);
+	printf("dwTotalVirtual = %08x/n", ms.dwTotalVirtual);
+	printf("dwAvailVirtual = %08x/n", ms.dwAvailVirtual);
 }
 
 void getMemoryInfo()
@@ -111,7 +123,7 @@ void fillVectors()
 }
 
 ////////////////¬ыделение пам€ти дл€ added
-void theLeastSufficientAdd(SIZE_T added) {
+void theLeastSufficientAdd(BYTE added) {
 	getSystemInfo();
 	fillVectors();
 
@@ -147,7 +159,7 @@ void theLeastSufficientAdd(SIZE_T added) {
 }
 
 // ”дал€ть нужно по адресу, но его трудно угадать, т.к. он мен€етс€ посто€нно
-void theLeastSufficientDelete(SIZE_T elem)
+void theLeastSufficientDelete(BYTE elem)
 {
 	getSystemInfo();
 	fillVectors();
