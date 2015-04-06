@@ -251,6 +251,7 @@ void deleteTheMessage(int index) {
 		pbFile[i - message_size - 4] = pbFile[i];
 		pbFile[i] = 0;
 	}
+	//TODO: Файл не умешается, с этим нужно что-то делать.
 	setPosition(-message_size - 4);
 	ExitFromMailBox();
 	StartMailBox();
