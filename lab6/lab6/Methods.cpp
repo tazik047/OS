@@ -2,7 +2,7 @@
 #include <vector>
 #include <Windows.h>
 #include "Methods.h"
-#include "LinkedList.h"
+
 
 using namespace std;
 
@@ -186,9 +186,7 @@ void theLeastSufficientDelete(SIZE_T elem)
 	printCommitMem();
 	printFreeMem();
 }
-void swapingPages() {
-	
-}
+
 void printFreeMem() {
 	_tprintf(_T("MEM_FREE\n"));
 	for (int i = 0; i < freeMem.size(); i++){

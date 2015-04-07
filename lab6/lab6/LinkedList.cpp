@@ -29,7 +29,7 @@ public:
 	LinkedList();
 
 	void Add(memPages number);
-	
+
 	LinkedListItem* ElementAt(int index);
 
 	bool Insert(int index, memPages number);
@@ -39,9 +39,8 @@ public:
 	void Clear();
 
 	~LinkedList();
-	
-};
 
+};
 void LinkedList::Add(memPages number)
 {
 	LinkedListItem* item = new LinkedListItem(number);
