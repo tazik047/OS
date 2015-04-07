@@ -15,3 +15,4 @@ void printCommitMem();
 
 void printFreeMem();
 
+void swapPages(int limitationOfPages);

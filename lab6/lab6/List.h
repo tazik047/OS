@@ -25,6 +25,4 @@ public:
 	void insertNode(struct List::node*);
 	void deleteNode(struct List::node*);
 	void deleteList(struct List::node*);
-	void displayList(struct List::node*)const;
-	void displayNode(struct List::node*) const;
 };
