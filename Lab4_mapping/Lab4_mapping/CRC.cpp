@@ -2,7 +2,7 @@
 #include "CRC.h"
 #include "MyMain.h"
 
-int MAX_PRIME_NUMBER = 81157;
+#define MAX_PRIME_NUMBER 81157
 
 BOOL isPrime(int num)
 {
