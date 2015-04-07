@@ -12,17 +12,17 @@ using namespace std;
 
 struct memPages {
 	LPVOID address;
-	BYTE sizePages;
+	SIZE_T sizePages;
 };
 
 vector<memPages> freeMem;
 vector<memPages> commitMem;
 
 MEMORY_BASIC_INFORMATION mb;
-BYTE dwLength = sizeof(mb);
+SIZE_T dwLength = sizeof(mb);
 HANDLE h = GetCurrentProcess();
 
-BYTE bestSuitedSize, bestSuitedIndex;
+SIZE_T bestSuitedSize, bestSuitedIndex;
 LPVOID start, stop;
 
 void getSystemInfo() {
@@ -37,17 +37,18 @@ void printVirtualMemoryInfo() {
 	MEMORYSTATUS ms;
 	ms.dwLength = sizeof(ms);
 	GlobalMemoryStatus(&ms);
-	printf("dwMemoryLodad = %d/n", ms.dwMemoryLoad);
-	printf("dwTotalPhys = %08x/n", ms.dwTotalPhys);
-	printf("dwAvailPhys = %08x/n", ms.dwAvailPhys);
-	printf("dwTotalPageFile = %08x/n", ms.dwTotalPageFile);
-	printf("dwAvailPageFile = %08x/n", ms.dwAvailPageFile);
-	printf("dwTotalVirtual = %08x/n", ms.dwTotalVirtual);
-	printf("dwAvailVirtual = %08x/n", ms.dwAvailVirtual);
+	printf("dwMemoryLodad = %d\n", ms.dwMemoryLoad);
+	printf("dwTotalPhys = %08x\n", ms.dwTotalPhys);
+	printf("dwAvailPhys = %08x\n", ms.dwAvailPhys);
+	printf("dwTotalPageFile = %08x\n", ms.dwTotalPageFile);
+	printf("dwAvailPageFile = %08x\n", ms.dwAvailPageFile);
+	printf("dwTotalVirtual = %08x\n", ms.dwTotalVirtual);
+	printf("dwAvailVirtual = %08x\n", ms.dwAvailVirtual);
 }
 
 void getMemoryInfo()
 {
+	printVirtualMemoryInfo();
 	getSystemInfo();
 	while ((unsigned)start < (unsigned)stop)
 	{
@@ -89,7 +90,7 @@ void getMemoryInfo()
 
 		_tprintf(_T("\n\n"));
 
-		start = (BYTE*)start + mb.RegionSize;
+		start = (SIZE_T*)start + mb.RegionSize;
 	}
 }
 
