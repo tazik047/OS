@@ -19,3 +19,13 @@ void ReadMessage(int index);
 void printTheInfo();
 
 void clearTheMailBox();
+
+template <typename T>
+T byteToT(int);
+
+template <typename T>
+void writeTToByte(int, T);
+
+void reduceFile(int);
+
+void setPosition(int);

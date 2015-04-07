@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "CRC.h"
+#include "MyMain.h"
 
 int MAX_PRIME_NUMBER = 81157;
 
@@ -16,36 +17,32 @@ BOOL isPrime(int num)
 
 
 BOOL validate(HANDLE h){
-	SetFilePointer(h, -4, 0, FILE_END);
-	DWORD sum, a, b, read;
-	ReadFile(h, &sum, 4, &read, 0);
-	SetFilePointer(h, -4, 0, FILE_END);
-	SetEndOfFile(h);
-	SetFilePointer(h, 0, 0, FILE_BEGIN);
-	ReadFile(h, &a, 4, &read, 0);
-	while (TRUE){
-		ReadFile(h, &b, 4, &read, 0);
-		if (read != 4)
-			break;
+	int end = GetFileSize(h, 0) - 4;
+	DWORD sum, a, b, index = 4;
+	sum = byteToT<int>(end);
+	a = byteToT<int>(0);
+	while (index <= end-4){
+		b = byteToT<int>(index);
 		a = (a + b) % MAX_PRIME_NUMBER;
+		index += 4;
 	}
 	if (a == sum){
+		reduceFile(4);
 		return TRUE;
 	}
-	WriteFile(h, &sum, 4, &read, 0);
+	writeTToByte(end, sum);
 	return FALSE;
 }
 
 void createCRC(HANDLE h){
-	DWORD a, b, read;
-	SetFilePointer(h, 0, 0, FILE_BEGIN);
-	ReadFile(h, &a, 4, &read, 0);
-	while (TRUE){
-		ReadFile(h, &b, 4, &read, 0);
-		if (read != 4)
-			break;
+	DWORD a, b, index = 4;
+	int end = GetFileSize(h, 0);
+	a = byteToT<int>(0);
+	while (index <= end - 4){
+		b = byteToT<int>(index);
 		a = (a + b) % MAX_PRIME_NUMBER;
+		index += 4;
 	}
-	SetFilePointer(h, 0, 0, FILE_END);
-	WriteFile(h, &a, 4, &read, 0);
+	setPosition(4);
+	writeTToByte(end, a);
 }

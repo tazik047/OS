@@ -16,7 +16,7 @@ void printError(){
 	return;
 }
 
-BOOL StartMailBox(){
+BOOL OpenMyFile(BOOL& newFile){
 	h = CreateFile(path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ, 0, OPEN_ALWAYS, 0, 0);
 	if (h == INVALID_HANDLE_VALUE){
 		_tprintf(_T("Error when creating/open files\n"));
@@ -43,8 +43,15 @@ BOOL StartMailBox(){
 			printError();
 			return FALSE;
 		}
+		newFile =  TRUE;
 	}
-	/*else if (!validate(h)){
+}
+
+BOOL StartMailBox(){
+	BOOL newFile = FALSE;
+	if (!OpenMyFile(newFile))
+		return FALSE;
+	/*else if (!newFile && !validate(h)){
 		_tprintf(_T("Файл испорчен!!!\n"));
 		ExitFromMailBox();
 		return FALSE;
@@ -98,7 +105,6 @@ BOOL createFileMapping()
 		return FALSE;
 	// Проецируем в адресное пространство процесса объект "проекция файла"
 	pbFile = (PBYTE)MapViewOfFile(hFileMapping, FILE_MAP_ALL_ACCESS, 0, 0, 0);
-	//print(pbFile);
 	return pbFile != 0;
 }
 
@@ -108,7 +114,7 @@ void setPosition(int i){
 }
 
 void resetPosition(){
-	SetFilePointer(h, 0, 0, FILE_END);
+	SetFilePointer(h, 0, 0, FILE_BEGIN);
 }
 
 void ExitFromMailBox(){
@@ -195,47 +201,6 @@ void deleteTheMessage(int index) {
 		return;
 	}
 	int message_size;
-	/*
-	int counter = 0;
-	while (ReadFile(h, &message_size, 4, &read, 0)) {
-		SetFilePointer(h, message_size, 0, FILE_CURRENT);
-		if (counter == index) {
-			bytes -= message_size;
-			count--;
-			break;
-		}
-		counter++;
-	}
-	TCHAR* message;
-	int prev_size_message = message_size;
-	while (TRUE){
-		ReadFile(h, &message_size, 4, &read, 0);
-		if (read != 4)
-			break;
-		message = new TCHAR[message_size / sizeof(TCHAR)];
-		ReadFile(h, message, message_size, &read, 0);
-		message[message_size / sizeof(TCHAR)] = '\0';
-		SetFilePointer(h, -(message_size + prev_size_message + 8), 0, FILE_CURRENT);
-		WriteFile(h, &message_size, 4, &read, 0);
-		WriteFile(h, message, message_size, &read, 0);
-		SetFilePointer(h, prev_size_message + 4, 0, FILE_CURRENT);
-	}
-	SetFilePointer(h, -(prev_size_message + 4), 0, FILE_END);
-	SetEndOfFile(h);
-	ExitFromMailBox();
-	StartMailBox();
-	resetPosition();
-	WriteFile(h, &count, 4, &read, 0);
-	if (read != 4){
-		printError();
-		return;
-	}
-
-	WriteFile(h, &bytes, 4, &read, 0);
-	if (read != 4){
-		printError();
-		return;
-	}*/
 
 	int counter = 0;
 	int ind = 12;
@@ -249,19 +214,35 @@ void deleteTheMessage(int index) {
 	int end = GetFileSize(h,0);
 	for (int i = ind + message_size + 4; i < end; i++){
 		pbFile[i - message_size - 4] = pbFile[i];
-		pbFile[i] = 0;
 	}
-	//TODO: Файл не умешается, с этим нужно что-то делать.
+	writeTToByte(0, count);
+	writeTToByte(4, bytes);
+	
+	//Уменьшение размера файла.
+	BOOL newFile;
+	ExitFromMailBox();
+	OpenMyFile(newFile);
 	setPosition(-message_size - 4);
 	ExitFromMailBox();
 	StartMailBox();
-	writeTToByte(0, count);
-	writeTToByte(4, bytes);
+	
 }
 
 void clearTheMailBox() {
+	BOOL newFile;
+	ExitFromMailBox();
+	OpenMyFile(newFile);
 	resetPosition();
 	SetEndOfFile(h);
-	CloseHandle(h);
+	ExitFromMailBox();
+	StartMailBox();
+}
+
+void reduceFile(int size){
+	BOOL newFile;
+	ExitFromMailBox();
+	OpenMyFile(newFile);
+	setPosition(-size);
+	ExitFromMailBox();
 	StartMailBox();
 }
