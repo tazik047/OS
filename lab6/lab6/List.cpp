@@ -1,37 +1,39 @@
 #include "stdafx.h";
-#include <Windows.h>
+#include <Windows.h>;
+#include "List.h";
+
 using namespace std;
 
-class list
-{
-public:
-	struct memPages {
-		LPVOID address;
-		SIZE_T sizePages;
-	};
-	struct node {
-		int id;
-		memPages name;
-		struct node *next;
-	} *head, *tail, *ptr;
+//class List
+//{
+//public:
+//	struct memPages {
+//		LPVOID address;
+//		SIZE_T sizePages;
+//	};
+//	struct node {
+//		int id;
+//		memPages name;
+//		struct node *next;
+//	} *head, *tail, *ptr;
+//
+//	List() :head(NULL), tail(NULL){}	// constructor	
+//	~List();			// destructor
+//
+//	struct List::node* searchName(struct List::node*, memPages);
+//	struct List::node* searchId(struct List::node*, int);
+//	struct List::node* initNode(memPages, int);
+//
+//	void reverse();
+//	void addNode(struct List::node*);
+//	void insertNode(struct List::node*);
+//	void deleteNode(struct List::node*);
+//	void deleteList(struct List::node*);
+//	void displayList(struct List::node*)const;
+//	void displayNode(struct List::node*) const;
+//};
 
-	list() :head(NULL), tail(NULL){}	// constructor	
-	~list();			// destructor
-
-	struct list::node* searchName(struct list::node*, memPages);
-	struct list::node* searchId(struct list::node*, int);
-	struct list::node* initNode(memPages, int);
-
-	void reverse();
-	void addNode(struct list::node*);
-	void insertNode(struct list::node*);
-	void deleteNode(struct list::node*);
-	void deleteList(struct list::node*);
-	void displayList(struct list::node*)const;
-	void displayNode(struct list::node*) const;
-};
-
-list::~list() {
+List::~List() {
 	node *current, *temp;
 	current = head;
 	temp = head;
@@ -42,7 +44,7 @@ list::~list() {
 	}
 }
 
-struct list::node* list::initNode(memPages s, int i) {
+struct List::node* List::initNode(memPages s, int i) {
 	struct node *ptr = new node;
 
 	// error? then just return
@@ -57,16 +59,16 @@ struct list::node* list::initNode(memPages s, int i) {
 	}
 }
 
-// adding to the end of list  
-void list::addNode(struct node *newNode)  {
+// adding to the end of List  
+void List::addNode(struct node *newNode)  {
 	// if there is no node, put it to head
 	if (head == NULL) {
 		head = newNode;
 		tail = newNode;
 	}
 
-	// link in the new_node to the tail of the list
-	// then mark the next field as the end of the list
+	// link in the new_node to the tail of the List
+	// then mark the next field as the end of the List
 	// adjust tail to point to the last node
 
 	tail->next = newNode;
@@ -74,42 +76,42 @@ void list::addNode(struct node *newNode)  {
 	tail = newNode;
 }
 
-void list::insertNode(struct node *newnode) {
+void List::insertNode(struct node *newnode) {
 	struct node *temp, *prev;
 
-	if (head == NULL) {                     // if an empty list,         
+	if (head == NULL) {                     // if an empty List,         
 		head = newnode;                      // set 'head' to it         
 		tail = newnode;
-		head->next = NULL;                   // set end of list to NULL     
+		head->next = NULL;                   // set end of List to NULL     
 		return;
 	}
 
-	temp = head;                             // start at beginning of list 
+	temp = head;                             // start at beginning of List 
 	// while currentname <newname 
 	while (temp->name.address < newnode->name.address) {	    // to be inserted then 
-		temp = temp->next;                // goto the next node in list  
-		if (temp == NULL)                // don't go past end of list    
+		temp = temp->next;                // goto the next node in List  
+		if (temp == NULL)                // don't go past end of List    
 			break;
 	}
 	// set previous node before we insert  
 	// first check to see if it's inserting         
 	if (temp == head) {		    	    // before the first node 
-		newnode->next = head;                 // link next field to original list    
+		newnode->next = head;                 // link next field to original List    
 		head = newnode;                       // head adjusted to new node          
 	}
 	else {				    // it's not the first node
-		prev = head;		    	    // start of the list, 
+		prev = head;		    	    // start of the List, 
 		while (prev->next != temp) {
 			prev = prev->next;	    	    // will cycle to node before temp 
 		}
 		prev->next = newnode;                 // insert node between prev and next   
 		newnode->next = temp;
 		if (tail == prev)		    // if the new node is inserted at the  
-			tail = newnode;		    // end of the list the adjust 'end'    
+			tail = newnode;		    // end of the List the adjust 'end'    
 	}
 }
 
-struct list::node* list::searchName(struct node* ptr, memPages name) {
+struct List::node* List::searchName(struct node* ptr, memPages name) {
 	while (name.address != ptr->name.address) {
 		ptr = ptr->next;
 		if (ptr == NULL)
@@ -118,7 +120,7 @@ struct list::node* list::searchName(struct node* ptr, memPages name) {
 	return ptr;
 }
 
-struct list::node* list::searchId(struct node* ptr, int id) {
+struct List::node* List::searchId(struct node* ptr, int id) {
 	while (id != ptr->id) {
 		ptr = ptr->next;
 		if (ptr == NULL)
@@ -127,13 +129,13 @@ struct list::node* list::searchId(struct node* ptr, int id) {
 	return ptr;
 }
 
-void list::reverse() {
+void List::reverse() {
 	// we need at least two nodes for the reverse to have any effect
 	if (head == NULL || head->next == NULL) return;
 
-	// Starting 2nd list as 'me' and 'head' is now 'me-&gt;next'
+	// Starting 2nd List as 'me' and 'head' is now 'me-&gt;next'
 	// and 'head-&gt;next' is pointing to NULL
-	// So, the 3rd list is now 'child' of 'me'
+	// So, the 3rd List is now 'child' of 'me'
 	node *parent = head;
 	node *me = head->next;
 	node *child = me->next;
@@ -158,11 +160,11 @@ void list::reverse() {
 }
 
 
-void list::deleteNode(struct list::node *ptr)
+void List::deleteNode(struct List::node *ptr)
 {
 	struct node *temp, *prev;
 	temp = ptr;    // node to be deleted 
-	prev = head;   // start of the list, will cycle to node before temp    
+	prev = head;   // start of the List, will cycle to node before temp    
 
 	if (temp == prev) {                    // deleting first node?  
 		head = head->next;                  // moves head to next node     
@@ -181,18 +183,18 @@ void list::deleteNode(struct list::node *ptr)
 	}
 }
 
-void list::deleteList(struct node *ptr)
+void List::deleteList(struct node *ptr)
 {
 	struct node *temp;
 
-	if (head == NULL) return;   	// don't try to delete an empty list      
+	if (head == NULL) return;   	// don't try to delete an empty List      
 
-	if (ptr == head) {			// if we are deleting the entire list    
+	if (ptr == head) {			// if we are deleting the entire List    
 		head = NULL;			// then reset head and    
 		tail = NULL;			// end to empty                                     
 	}
 	else {
-		temp = head;			// if it's not the entire list, readjust end   
+		temp = head;			// if it's not the entire List, readjust end   
 		while (temp->next != ptr)       // locate previous node to ptr   
 			temp = temp->next;
 		tail = temp;                     // set end to node before ptr   

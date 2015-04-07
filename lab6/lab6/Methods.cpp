@@ -2,7 +2,7 @@
 #include <vector>
 #include <Windows.h>
 #include "Methods.h"
-
+#include "List.h";
 
 using namespace std;
 
@@ -201,4 +201,7 @@ void printCommitMem() {
 		_tprintf(_T("%d. Address: %d Size: %d\n"), i, commitMem[i].address, commitMem[i].sizePages);
 	}
 	_tprintf(_T("\n"));
+}
+void dosmth() {
+	List* lst = new List();
 }
