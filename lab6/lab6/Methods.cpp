@@ -2,6 +2,7 @@
 #include <vector>
 #include <Windows.h>
 #include "Methods.h"
+#include "LinkedList.h"
 
 using namespace std;
 
@@ -45,7 +46,7 @@ void printVirtualMemoryInfo() {
 	printf("dwTotalVirtual = %08x\n", ms.dwTotalVirtual);
 	printf("dwAvailVirtual = %08x\n", ms.dwAvailVirtual);
 }
-
+//firstTask
 void getMemoryInfo()
 {
 	printVirtualMemoryInfo();
@@ -115,7 +116,7 @@ void fillVectors()
 			commitMem.push_back(commitPages);
 			break;
 		}
-		start = (BYTE*)start + mb.RegionSize;
+		start = (SIZE_T*)start + mb.RegionSize;
 	}
 
 	// Вывод списков на консоль
@@ -124,7 +125,7 @@ void fillVectors()
 }
 
 ////////////////Выделение памяти для added
-void theLeastSufficientAdd(BYTE added) {
+void theLeastSufficientAdd(SIZE_T added) {
 	getSystemInfo();
 	fillVectors();
 
@@ -150,7 +151,7 @@ void theLeastSufficientAdd(BYTE added) {
 	commitMem.push_back(temp);
 
 	// меняем элемент в фриМем
-	freeMem[bestSuitedIndex].address = (BYTE*)freeMem[bestSuitedIndex].address + added;
+	freeMem[bestSuitedIndex].address = (SIZE_T*)freeMem[bestSuitedIndex].address + added;
 	freeMem[bestSuitedIndex].sizePages -= added;
 	if (freeMem[bestSuitedIndex].sizePages == 0)
 		freeMem.erase(freeMem.begin() + bestSuitedIndex);
@@ -160,7 +161,7 @@ void theLeastSufficientAdd(BYTE added) {
 }
 
 // Удалять нужно по адресу, но его трудно угадать, т.к. он меняется постоянно
-void theLeastSufficientDelete(BYTE elem)
+void theLeastSufficientDelete(SIZE_T elem)
 {
 	getSystemInfo();
 	fillVectors();
@@ -185,7 +186,9 @@ void theLeastSufficientDelete(BYTE elem)
 	printCommitMem();
 	printFreeMem();
 }
-
+void swapingPages() {
+	
+}
 void printFreeMem() {
 	_tprintf(_T("MEM_FREE\n"));
 	for (int i = 0; i < freeMem.size(); i++){
