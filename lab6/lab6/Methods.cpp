@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include "Methods.h"
 #include "List.h";
+#include <locale>
 
 using namespace std;
 
@@ -16,6 +17,8 @@ struct memPages {
 	SIZE_T sizePages;
 };
 
+List *listOfPages = new List();
+int pageLimit;
 vector<memPages> freeMem;
 vector<memPages> commitMem;
 
@@ -202,6 +205,52 @@ void printCommitMem() {
 	}
 	_tprintf(_T("\n"));
 }
-void dosmth() {
-	List* lst = new List();
+/*
+есть у нас список.список должен быть ограниченным по размеру.например, 
+размер списка 4. нам нужно добавить страницу со значением 1000 - добавл€ем.потом добавл€ем 500. 
+и блабла пока список не ставнет равным 4. после чего, когда нам надо будет еще один элемент добавить, 
+мы "выталкиваем" самый старый элемент, который у нас в начале, а в конец добавл€ем новый
+если, например, значение нового элемента совпадает с уже существующим - 
+мы просто перекидываем ссылки(то есть теперь этот элемент будет ссылатьс€ на последний, а там, 
+где этот элмент был, мы перекинем ссылку предыдущего на следующий после этого элемента).
+*/
+void insertPage(SIZE_T size, LPVOID address,int count) {
+	List::memPages commitPages;
+	commitPages.address = address;
+	commitPages.sizePages = size;
+	List:: node* nd = listOfPages->initNode(commitPages, count);
+	listOfPages->addNode(nd);
+}
+void swapPages(int limitationOfPages) {
+	pageLimit = limitationOfPages;
+	_tsetlocale(LC_ALL, _T("Russian"));
+	_tprintf(_T("„то желаете выполнить:\n"));
+	size_t c = -1;
+	int count = 0;
+	while (c != 0){
+		_tprintf(_T("0. ¬ыйти из программы.\n"));
+		_tprintf(_T("1. ƒобавить страницу.\n"));
+		_tprintf(_T("2. ¬ывести информацию о страницах\n"));
+		_tscanf_s(_T("%d"), &c);
+		switch (c)
+		{
+		case 0:
+			break;
+		case 1:
+			_tprintf(_T("¬ведите адрес страницы:\n"));
+			LPVOID address;
+			fflush(stdin);
+			scanf("%d", &address);
+			_tprintf(_T("¬ведите размер страницы:\n"));
+			SIZE_T size;
+			fflush(stdin);
+			scanf("%d", &size);
+			count++;
+			insertPage(size, address, count);
+			break;
+		case 2:
+			break;
+		}
+		_tprintf(_T("ѕока\n"));
+	}
 }

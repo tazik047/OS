@@ -2,36 +2,6 @@
 #include <Windows.h>;
 #include "List.h";
 
-using namespace std;
-
-//class List
-//{
-//public:
-//	struct memPages {
-//		LPVOID address;
-//		SIZE_T sizePages;
-//	};
-//	struct node {
-//		int id;
-//		memPages name;
-//		struct node *next;
-//	} *head, *tail, *ptr;
-//
-//	List() :head(NULL), tail(NULL){}	// constructor	
-//	~List();			// destructor
-//
-//	struct List::node* searchName(struct List::node*, memPages);
-//	struct List::node* searchId(struct List::node*, int);
-//	struct List::node* initNode(memPages, int);
-//
-//	void reverse();
-//	void addNode(struct List::node*);
-//	void insertNode(struct List::node*);
-//	void deleteNode(struct List::node*);
-//	void deleteList(struct List::node*);
-//	void displayList(struct List::node*)const;
-//	void displayNode(struct List::node*) const;
-//};
 
 List::~List() {
 	node *current, *temp;
@@ -44,7 +14,7 @@ List::~List() {
 	}
 }
 
-struct List::node* List::initNode(memPages s, int i) {
+struct List::node* List::initNode(memPages s, int id) {
 	struct node *ptr = new node;
 
 	// error? then just return
@@ -54,7 +24,7 @@ struct List::node* List::initNode(memPages s, int i) {
 	// then return pointer to ne node
 	else {
 		ptr->name = s;
-		ptr->id = i;
+		ptr->id = id;
 		return ptr;
 	}
 }
@@ -88,7 +58,7 @@ void List::insertNode(struct node *newnode) {
 
 	temp = head;                             // start at beginning of List 
 	// while currentname <newname 
-	while (temp->name.address < newnode->name.address) {	    // to be inserted then 
+	while (temp->name.sizePages < newnode->name.sizePages) {	    // to be inserted then 
 		temp = temp->next;                // goto the next node in List  
 		if (temp == NULL)                // don't go past end of List    
 			break;
