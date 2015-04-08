@@ -141,10 +141,7 @@ void theLeastSufficientAdd(SIZE_T added) {
 	fillVectors();
 	bestSuitedSize = freeMem[0].sizePages;
 	bestSuitedIndex = 0;
-	PVOID pv = VirtualAlloc(NULL,added,MEM_COMMIT,PAGE_READWRITE);
-	if (pv == NULL) {
-		return;
-	}
+	
 	// »щем куда добавить
 	for (int i = 1; i < freeMem.size(); i++)
 	{
@@ -153,6 +150,12 @@ void theLeastSufficientAdd(SIZE_T added) {
 			bestSuitedSize = freeMem[i].sizePages;
 			bestSuitedIndex = i;
 		}
+	}
+
+	//выдел€ем пам€ть под найденный адрес.
+	PVOID pv = VirtualAlloc(freeMem[bestSuitedIndex].address, added, MEM_COMMIT, PAGE_READWRITE);
+	if (pv == NULL) {
+		return;
 	}
 
 	_tprintf(_T("\nbestSuitedSize = %d bestSuitedIndex = %d\n\n"), bestSuitedSize, bestSuitedIndex);
