@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "LRU.h"
 
+BOOL contains(int);
+
 int LRU[3]; // {0,0,0}
 
 int cache[4];
