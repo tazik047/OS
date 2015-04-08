@@ -90,6 +90,9 @@ void getMemoryInfo()
 		case MEM_PRIVATE:
 			_tprintf(_T("MEM_PRIVATE"));
 			break;
+		default:
+			_tprintf(_T("MEM_FREE"));
+			break;
 		}
 
 		_tprintf(_T("\n\n"));
@@ -119,7 +122,7 @@ void fillVectors()
 			commitMem.push_back(commitPages);
 			break;
 		}
-		start = (BYTE*)start + mb.RegionSize;
+		start = (SIZE_T*)start + mb.RegionSize;
 	}
 
 	// Вывод списков на консоль
@@ -154,7 +157,7 @@ void theLeastSufficientAdd(SIZE_T added) {
 	commitMem.push_back(temp);
 
 	// меняем элемент в фриМем
-	freeMem[bestSuitedIndex].address = (BYTE*)freeMem[bestSuitedIndex].address + added;
+	freeMem[bestSuitedIndex].address = (SIZE_T*)freeMem[bestSuitedIndex].address + added;
 	freeMem[bestSuitedIndex].sizePages -= added;
 	if (freeMem[bestSuitedIndex].sizePages == 0)
 		freeMem.erase(freeMem.begin() + bestSuitedIndex);
@@ -168,12 +171,6 @@ void theLeastSufficientDelete(SIZE_T elem)
 {
 	getSystemInfo();
 	fillVectors();
-
-	if (elem >= commitMem.size())
-	{
-		_tprintf(_T("Index is too big\n\n"));
-		return;
-	}
 
 	_tprintf(_T("DELETING. Address: %d Size: %d\n\n"), commitMem[elem].address, commitMem[elem].sizePages);
 	LPVOID del = commitMem[elem].address;
