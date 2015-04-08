@@ -190,21 +190,35 @@ void theLeastSufficientDelete(SIZE_T elem)
 	printFreeMem();
 }
 
-void printFreeMem() {
-	_tprintf(_T("MEM_FREE\n"));
-	for (int i = 0; i < freeMem.size(); i++){
-		_tprintf(_T("%d. Address: %d Size: %d\n"), i, freeMem[i].address, freeMem[i].sizePages);
+//Передаем сюда ссылку на вектор, потому что если передавать просто вектор, то все значения будут
+//копироваться, а это долого и по памяти напряжно.
+void printMem(vector<memPages> &mas)
+{
+	for (int i = 0; i < mas.size(); i++){
+		_tprintf(_T("%d. Address: %d Size: %d\n"), i, mas[i].address, mas[i].sizePages);
 	}
 	_tprintf(_T("\n"));
+
+}
+
+void printFreeMem() {
+	_tprintf(_T("MEM_FREE\n"));
+	/*for (int i = 0; i < freeMem.size(); i++){
+		_tprintf(_T("%d. Address: %d Size: %d\n"), i, freeMem[i].address, freeMem[i].sizePages);
+	}
+	_tprintf(_T("\n"));*/
+	printMem(freeMem);
 }
 
 void printCommitMem() {
 	_tprintf(_T("MEM_COMMIT\n"));
-	for (int i = 0; i < commitMem.size(); i++){
+	/*for (int i = 0; i < commitMem.size(); i++){
 		_tprintf(_T("%d. Address: %d Size: %d\n"), i, commitMem[i].address, commitMem[i].sizePages);
 	}
-	_tprintf(_T("\n"));
+	_tprintf(_T("\n"));*/
+	printMem(commitMem);
 }
+
 /*
 есть у нас список.список должен быть ограниченным по размеру.например, 
 размер списка 4. нам нужно добавить страницу со значением 1000 - добавляем.потом добавляем 500. 
