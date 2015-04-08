@@ -64,7 +64,7 @@ void getMemoryInfo()
 		_tprintf(_T("BaseAddress: %x\n"), mb.BaseAddress);
 		_tprintf(_T("RegionSize: %x\n"), mb.RegionSize);
 
-		_tprintf(_T("RegionSize: "));
+		_tprintf(_T("State: "));
 		switch (mb.State) {
 		case MEM_COMMIT:
 			_tprintf(_T("MEM_COMMIT"));
