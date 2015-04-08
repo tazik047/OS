@@ -3,7 +3,7 @@
 
 BOOL contains(int);
 
-int LRU[3]; // {0,0,0}
+BYTE LRU[3]; // {0,0,0}
 
 int cache[4];
 
