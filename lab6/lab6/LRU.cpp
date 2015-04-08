@@ -26,7 +26,7 @@ void put(int key)
 	}
 	else // во вторую
 	{
-		LRU[1] = 1;
+		LRU[0] = 0;
 		if (LRU[2] == 0)
 		{
 			cache[2] = key;
