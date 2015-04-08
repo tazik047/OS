@@ -273,7 +273,7 @@ void swapPages(int limitationOfPages) {
 		_tprintf(_T("2. Вывести информацию о страницах\n"));
 		_tscanf_s(_T("%d"), &c);
 		switch (c)
-		{
+		{ 
 		case 0:
 			break;
 		case 1:
