@@ -17,6 +17,11 @@ struct memPages {
 	SIZE_T sizePages;
 };
 
+struct limited {
+	SIZE_T data;
+	SIZE_T length;
+};
+
 List *listOfPages = new List();
 int pageLimit;
 vector<memPages> freeMem;
@@ -289,4 +294,42 @@ void swapPages(int limitationOfPages) {
 		}
 		_tprintf(_T("Пока\n"));
 	}
+}
+
+//third
+vector<SIZE_T> limitedVector;
+void printLimitedVector()
+{
+	for (int i = 0; i < limitedVector.size(); i++){
+		_tprintf(_T("%d. %d\n"), i, limitedVector[i]);
+	}
+	_tprintf(_T("\n"));
+}
+
+void addToPages(SIZE_T elem)
+{
+	_tprintf(_T("Elem: %d\n"), elem);
+	SIZE_T maxLen = 5;
+	
+	for (int i = 0; i < limitedVector.size(); i++)
+	{
+		if (limitedVector[i] == elem)
+		{
+			limitedVector.push_back(limitedVector[i]);
+			limitedVector.erase(limitedVector.begin() + i);
+			printLimitedVector();
+			return;
+		}
+	}
+
+	if (limitedVector.size() == maxLen)
+	{
+		limitedVector.erase(limitedVector.begin());
+		limitedVector.push_back(elem);
+	}
+	else
+	{
+		limitedVector.push_back(elem);
+	}
+	printLimitedVector();
 }
