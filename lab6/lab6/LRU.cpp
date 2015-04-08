@@ -7,8 +7,45 @@ int cache[4];
 
 void put(int key)
 {
-	//Определяем куда именно писать в кеше, используя этот массив ЛРУ, когда определелись
-	//то записываем туда ключ. Все.
+	if (contains(key)) return;
+	if (LRU[0] == 0) // если 0, то нужно писать в первую половину кэша.
+	{
+		LRU[0] = 1;
+		if (LRU[1] == 0)
+		{
+			cache[0] = key;
+			LRU[1] = 1;
+		}
+		else
+		{
+			cache[1] = key;
+			LRU[1] = 0;
+		}
+	}
+	else // во вторую
+	{
+		LRU[1] = 1;
+		if (LRU[2] == 0)
+		{
+			cache[2] = key;
+			LRU[2] = 1;
+		}
+		else
+		{
+			cache[3] = key;
+			LRU[2] = 0;
+		}
+	}
+}
+
+BOOL contains(int key)
+{
+	for (int i = 0; i < 4; i++)
+	{
+		if (cache[i] == key)
+			return TRUE;
+	}
+	return FALSE;
 }
 
 void printCache()
