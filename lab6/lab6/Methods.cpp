@@ -90,11 +90,14 @@ void getMemoryInfo()
 		case MEM_PRIVATE:
 			_tprintf(_T("MEM_PRIVATE"));
 			break;
+		default:
+			_tprintf(_T("MEM_FREE"));
+			break;
 		}
 
 		_tprintf(_T("\n\n"));
 
-		start = (SIZE_T*)start + mb.RegionSize;
+		start = (BYTE*)start + mb.RegionSize;
 	}
 }
 
