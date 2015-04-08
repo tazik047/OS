@@ -5,7 +5,7 @@ BOOL contains(int);
 
 BYTE LRU[3]; // {0,0,0}
 
-int cache[4];
+int cache[] = { -1, -1, -1, 1 };
 
 void put(int key)
 {
@@ -54,6 +54,11 @@ void printCache()
 {
 	for (size_t i = 0; i < 4; i++)
 	{
+		if (cache[i] == -1)
+		{
+			_tprintf(_T("_ "));
+			continue;
+		}
 		_tprintf(_T("%d "), cache[i]);
 	}
 	_tprintf(_T("\n"));
