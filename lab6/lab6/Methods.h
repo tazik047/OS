@@ -16,3 +16,7 @@ void printCommitMem();
 void printFreeMem();
 
 void swapPages(int limitationOfPages);
+
+void printLimitedVector();
+
+void addToPages(SIZE_T elem);
