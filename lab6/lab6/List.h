@@ -16,13 +16,14 @@ public:
 	List() :head(NULL), tail(NULL){}	// constructor	
 	~List();			// destructor
 
-	struct List::node* searchName(struct List::node*, memPages);
-	struct List::node* searchId(struct List::node*, int);
 	struct List::node* initNode(memPages, int);
 
-	void reverse();
+	void deleteOddNode(struct List::node*);
+	int getLength();
+	bool contains(struct List::node*);
 	void addNode(struct List::node*);
-	void insertNode(struct List::node*);
 	void deleteNode(struct List::node*);
 	void deleteList(struct List::node*);
+	void changePages(struct List::node*);
+	void printList();
 };

@@ -218,8 +218,20 @@ void insertPage(SIZE_T size, LPVOID address,int count) {
 	List::memPages commitPages;
 	commitPages.address = address;
 	commitPages.sizePages = size;
-	List:: node* nd = listOfPages->initNode(commitPages, count);
-	listOfPages->addNode(nd);
+	List::node* nd = listOfPages->initNode(commitPages, count);
+	if (listOfPages->getLength() < pageLimit && !listOfPages->contains(nd)) {
+		listOfPages->addNode(nd);
+	}
+	else if (listOfPages->getLength() < pageLimit && listOfPages->contains(nd)) {
+		listOfPages->changePages(nd);
+	}
+	else {
+		if (listOfPages->getLength() == pageLimit) {
+			listOfPages->changePages(nd);
+			return;
+		}
+		listOfPages->deleteOddNode(nd);
+	}
 }
 void swapPages(int limitationOfPages) {
 	pageLimit = limitationOfPages;
@@ -249,6 +261,7 @@ void swapPages(int limitationOfPages) {
 			insertPage(size, address, count);
 			break;
 		case 2:
+			listOfPages->printList();
 			break;
 		}
 		_tprintf(_T("Пока\n"));
