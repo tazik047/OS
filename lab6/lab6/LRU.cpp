@@ -3,9 +3,9 @@
 
 BOOL contains(int);
 
-BYTE LRU[3]; // {0,0,0}
+BYTE LRU[] = { 0, 0, 0 };
 
-int cache[] = { -1, -1, -1, 1 };
+int cache[] = { -1, -1, -1, -1 };
 
 void put(int key)
 {
