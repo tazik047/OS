@@ -134,10 +134,12 @@ void fillVectors()
 void theLeastSufficientAdd(SIZE_T added) {
 	getSystemInfo();
 	fillVectors();
-
 	bestSuitedSize = freeMem[0].sizePages;
 	bestSuitedIndex = 0;
-
+	PVOID pv = VirtualAlloc(NULL,added,MEM_COMMIT,PAGE_READWRITE);
+	if (pv == NULL) {
+		return;
+	}
 	// »щем куда добавить
 	for (int i = 1; i < freeMem.size(); i++)
 	{
@@ -195,6 +197,7 @@ void theLeastSufficientDelete(SIZE_T elem)
 			break;
 		}
 	}
+	VirtualFree(NULL, elem, MEM_RELEASE);
 	printCommitMem();
 	printFreeMem();
 }
