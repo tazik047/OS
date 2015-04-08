@@ -38,16 +38,16 @@ void getSystemInfo() {
 }
 
 void printVirtualMemoryInfo() {
-	MEMORYSTATUS ms;
+	MEMORYSTATUSEX ms;
 	ms.dwLength = sizeof(ms);
-	GlobalMemoryStatus(&ms);
-	printf("dwMemoryLodad = %d\n", ms.dwMemoryLoad);
-	printf("dwTotalPhys = %08x\n", ms.dwTotalPhys);
-	printf("dwAvailPhys = %08x\n", ms.dwAvailPhys);
-	printf("dwTotalPageFile = %08x\n", ms.dwTotalPageFile);
-	printf("dwAvailPageFile = %08x\n", ms.dwAvailPageFile);
-	printf("dwTotalVirtual = %08x\n", ms.dwTotalVirtual);
-	printf("dwAvailVirtual = %08x\n", ms.dwAvailVirtual);
+	GlobalMemoryStatusEx(&ms);
+	printf("MemoryLodad = %d\n", ms.dwMemoryLoad);
+	printf("TotalPhys = %08x\n", ms.ullTotalPhys);
+	printf("AvailPhys = %08x\n", ms.ullAvailPhys);
+	printf("TotalPageFile = %08x\n", ms.ullTotalPageFile);
+	printf("AvailPageFile = %08x\n", ms.ullAvailPageFile);
+	printf("TotalVirtual = %08x\n", ms.ullTotalVirtual);
+	printf("AvailVirtual = %08x\n", ms.ullAvailVirtual);
 }
 //firstTask
 void getMemoryInfo()
