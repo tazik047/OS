@@ -7,6 +7,31 @@
 // a - path
 // b - address of STARTUPINFO
 // c - address of PROCESS_INFORMATION
+void getInformation() {
+	HANDLE h = CreateFile(_T("unicode.txt"), GENERIC_READ, 0, 0, OPEN_EXISTING, 0, 0);
+	if (h != INVALID_HANDLE_VALUE)
+	{
+		DWORD dwSize = GetFileSize(h, 0);
+		PBYTE buf = new BYTE[dwSize + 1];
+		DWORD dwCount;
+		ReadFile(h, buf, dwSize, &dwCount, 0);
+		CloseHandle(h);
+		int pnz = 0xFFFFFFFF;
+
+		if (IsTextUnicode(buf, dwCount, &pnz))
+		{
+			char *resAns = new char[dwCount + 1];
+			WideCharToMultiByte(CP_ACP, 0, (wchar_t*)buf, dwCount, resAns, (dwCount + 1) / 2, NULL, NULL);
+			resAns[(dwCount + 1) / 2] = 0;
+			delete[]buf;
+			delete[]resAns;
+		}
+		else {
+			buf[dwCount] = 0;
+			delete[]buf;
+		}
+	}
+}
 void info(TCHAR* folder, TCHAR* fileName, int length)
 {
 	SetPriorityClass(GetCurrentProcess(), BELOW_NORMAL_PRIORITY_CLASS);

@@ -18,7 +18,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	memset(&si, 0, sizeof(STARTUPINFO));
 	si.cb = sizeof(STARTUPINFO);
 	SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
-	// Вызов текстового редактора
 	TCHAR CurrentPath[MAX_PATH];
 	GetCurrentDirectory(MAX_PATH, CurrentPath);
 	TCHAR ProcName[] = _T("Notepad.exe");
@@ -28,7 +27,6 @@ int _tmain(int argc, _TCHAR* argv[])
 		printf("Error\n");
 		return 1;
 	}
-	// Ждем завершения работы редактора
 	WaitForSingleObject(pi.hProcess, INFINITE);
 	CloseHandle(pi.hThread);
 	CloseHandle(pi.hProcess);
