@@ -28,7 +28,7 @@ void runProcess(TCHAR fullPath[MAX_PATH])
 int _tmain(int argc, _TCHAR* argv[])
 {
 	SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
-	while(true)
+	while(true)1
 	{
 		TCHAR first [MAX_PATH] = _T("C:/Users/Ira/Documents/Visual Studio 2012/Projects/Laba8_OS_(1)Notepad/Debug/Laba8_OS_(1)Notepad.exe");
 		TCHAR second [MAX_PATH] = _T("C:/Users/Ira/Documents/Visual Studio 2012/Projects/Laba8_OS(2)Find/Debug/Laba8_OS(2)Find.exe");

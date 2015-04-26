@@ -153,10 +153,11 @@ void theLeastSufficientAdd(SIZE_T added) {
 	}
 
 	//выделяем память под найденный адрес.
-	PVOID pv = VirtualAlloc(freeMem[bestSuitedIndex].address, added, MEM_COMMIT, PAGE_READWRITE);
+	/*PVOID pv = VirtualAlloc(freeMem[bestSuitedIndex].address, added, MEM_COMMIT, PAGE_READWRITE);
 	if (pv == NULL) {
+		_tprintf(_T("\nits null %d\n\n"), pv); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		return;
-	}
+	}*/
 
 	_tprintf(_T("\nbestSuitedSize = %d bestSuitedIndex = %d\n\n"), bestSuitedSize, bestSuitedIndex);
 
@@ -174,6 +175,7 @@ void theLeastSufficientAdd(SIZE_T added) {
 
 	// Вывод на консоль freeMem после выделения памяти
 	printFreeMem();
+	printCommitMem();
 }
 
 // Удалять нужно по адресу, но его трудно угадать, т.к. он меняется постоянно
