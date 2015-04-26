@@ -7,26 +7,29 @@
 // a - path
 // b - address of STARTUPINFO
 // c - address of PROCESS_INFORMATION
-#define CreateUnsuspendedProcess(a, b, c) CreateProcess(0, a, 0, 0, 0, 0, 0, 0, b, c);
+// d - Directory
+#define CreateUnsuspendedProcess(a, b, c, d) CreateProcess(0, a, 0, 0, 0, 0, 0, d, b, c);
+#define CreateSuspendedProcess(a, b, c,d) CreateProcess(0, a, 0, 0, 0, CREATE_SUSPENDED, 0, d, b, c);
 
 int _tmain(int argc, _TCHAR* argv[])
 {
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;
 	memset(&si, 0, sizeof(STARTUPINFO));
-
 	si.cb = sizeof(STARTUPINFO);
+	SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
+	// Вызов текстового редактора
+	TCHAR CurrentPath[MAX_PATH];
+	GetCurrentDirectory(MAX_PATH, CurrentPath);
 	TCHAR ProcName[] = _T("Notepad.exe");
-	BOOL b = CreateUnsuspendedProcess(ProcName, &si, &pi);
-	if (!b) 
+	BOOL b = CreateUnsuspendedProcess(ProcName, &si, &pi, CurrentPath);
+	if (!b)
 	{
-		_tprintf(_T("Oops! Something went wront..."));
-		return -1;
+		printf("Error\n");
+		return 1;
 	}
-	
-	// wait while program not closed
+	// Ждем завершения работы редактора
 	WaitForSingleObject(pi.hProcess, INFINITE);
-
 	CloseHandle(pi.hThread);
 	CloseHandle(pi.hProcess);
 	return 0;
