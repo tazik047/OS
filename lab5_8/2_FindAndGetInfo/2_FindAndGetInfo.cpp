@@ -7,8 +7,8 @@
 // a - path
 // b - address of STARTUPINFO
 // c - address of PROCESS_INFORMATION
-void getInformation() {
-	HANDLE h = CreateFile(_T("unicode.txt"), GENERIC_READ, 0, 0, OPEN_EXISTING, 0, 0);
+void getInformation(TCHAR* fileName) {
+	HANDLE h = CreateFile(fileName, GENERIC_READ, 0, 0, OPEN_EXISTING, 0, 0);
 	if (h != INVALID_HANDLE_VALUE)
 	{
 		DWORD dwSize = GetFileSize(h, 0);
@@ -17,18 +17,14 @@ void getInformation() {
 		ReadFile(h, buf, dwSize, &dwCount, 0);
 		CloseHandle(h);
 		int pnz = 0xFFFFFFFF;
-
 		if (IsTextUnicode(buf, dwCount, &pnz))
 		{
 			char *resAns = new char[dwCount + 1];
-			WideCharToMultiByte(CP_ACP, 0, (wchar_t*)buf, dwCount, resAns, (dwCount + 1) / 2, NULL, NULL);
+			WideCharToMultiByte(CP_ACP, 0,(wchar_t*)buf, dwCount, resAns, (dwCount + 1) / 2, NULL, NULL);
 			resAns[(dwCount + 1) / 2] = 0;
-			delete[]buf;
-			delete[]resAns;
 		}
 		else {
-			buf[dwCount] = 0;
-			delete[]buf;
+			
 		}
 	}
 }
@@ -79,6 +75,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 	system("pause");
 	return 0;*/
+	getInformation(_T("unicode.txt"));
 	LPCTSTR varName = _T("NotepadTime");
 	// вообще, по-идее, все должно быть проще. дальше код и цитата с Рихтера
 
@@ -102,7 +99,6 @@ int _tmain(int argc, _TCHAR* argv[])
 		_tprintf(TEXT(",%s,=<unknown value>\n"), varName);
 	}
 	// endРихтер 
-
 	WIN32_FIND_DATA wfd;
 	HANDLE h = FindFirstFile(varName, &wfd);
 	while (FindNextFile(h, &wfd))
