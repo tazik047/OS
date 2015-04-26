@@ -19,7 +19,8 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	//run 1_Notepad
 	TCHAR ProcName[] = _T("1_Notepad.exe");
-	//BOOL b = CreateUnsuspendedProcess(ProcName, &si, &pi);
+	BOOL flag = CreateUnsuspendedProcess(ProcName, &si, &pi);
+	WaitForSingleObject(pi.hProcess, INFINITE);
 
 	unsigned _int64 minTime = ((_int64)ft.dwHighDateTime << 32) | ft.dwLowDateTime;
 	TCHAR value[MAX_PATH];
@@ -28,8 +29,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	_tprintf(value);
 	TCHAR ProcName1[] = _T("2_FindAndGetInfo.exe");
 	BOOL b = CreateUnsuspendedProcess(ProcName1, &si, &pi);
+	WaitForSingleObject(pi.hProcess, INFINITE);
 	//run 2_FindAndGetInfo
-
+	CloseHandle(pi.hThread);
+	CloseHandle(pi.hProcess);
 	return 0;
 }
 

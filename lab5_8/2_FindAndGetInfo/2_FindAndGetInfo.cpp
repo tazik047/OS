@@ -55,7 +55,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	system("pause");
 	return 0;*/
 	LPCTSTR varName = _T("NotepadTime");
-
 	// вообще, по-идее, все должно быть проще. дальше код и цитата с Рихтера
 
 	PTSTR buff = NULL;
@@ -71,7 +70,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		DWORD size = dwResult * sizeof(TCHAR);
 		buff = (PTSTR)malloc(size);
 		GetEnvironmentVariable(varName, buff, size);
-		_tprintf(TEXT("%s=%s\n"), varName, buff);
+		//_tprintf(TEXT("%s=%s\n"), varName, buff);
 		//free(buff);
 	}
 	else {
@@ -85,7 +84,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 
 	}
-
 	return 0;
 }
 
