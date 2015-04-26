@@ -7,10 +7,53 @@
 // a - path
 // b - address of STARTUPINFO
 // c - address of PROCESS_INFORMATION
-#define CreateSuspendedProcess(a, b, c) CreateProcess(0, a, 0, 0, 0, CREATE_SUSPENDED, 0, 0, b, c);
+void info(TCHAR* folder, TCHAR* fileName, int length)
+{
+	SetPriorityClass(GetCurrentProcess(), BELOW_NORMAL_PRIORITY_CLASS);
+	_tprintf(_T("Found file: %s length: %d\n"), fileName, length);
+	int stringCount = 0;
+	FILE* pFile;
+	char mystring[500];
+	TCHAR temp[MAX_PATH];
+	_tcscpy(temp, folder);
+	_tcscat(temp, __TEXT("/"));
+	_tcscat(temp, fileName);
+
+	pFile = _tfopen(temp, L"r");
+	if (pFile == NULL) perror("Error opening file");
+	else {
+		while (fgets(mystring, 500, pFile) != NULL)
+		{
+			stringCount++;
+			int l = strlen(mystring);
+			printf("String %d : length = %d\n", stringCount, l);
+
+		}
+		printf("We have %d string in our file\n ", stringCount);
+		fclose(pFile);
+	}
+
+
+}
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	/*DWORD count = 0;
+	TCHAR temp[MAX_PATH];
+	WIN32_FIND_DATA findFile;
+	TCHAR CurrentPath[MAX_PATH];
+	GetCurrentDirectory(MAX_PATH, CurrentPath);
+	_tcscpy(temp, CurrentPath);
+	_tcscat(temp, __TEXT("/*.txt"));
+	HANDLE handle = FindFirstFile(temp, &findFile);
+	while (handle != INVALID_HANDLE_VALUE)
+	{
+		info(CurrentPath, findFile.cFileName, findFile.nFileSizeLow);
+		if (FindNextFile(handle, &findFile) == FALSE)
+			break;
+	}
+	system("pause");
+	return 0;*/
 	LPCTSTR varName = _T("NotepadTime");
 
 	// вообще, по-идее, все должно быть проще. дальше код и цитата с Рихтера
@@ -28,7 +71,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		DWORD size = dwResult * sizeof(TCHAR);
 		buff = (PTSTR)malloc(size);
 		GetEnvironmentVariable(varName, buff, size);
-		//_tprintf(TEXT("%s=%s\n"), varName, buff);
+		_tprintf(TEXT("%s=%s\n"), varName, buff);
 		//free(buff);
 	}
 	else {
