@@ -4,8 +4,47 @@
 #include "stdafx.h"
 #include <Windows.h>
 
-void getInformation(TCHAR* fileName) {
+FILETIME creationTime;
+FILETIME lastAccess;
+FILETIME fileWrite;
+SYSTEMTIME st;
+SYSTEMTIME checkST;
+FILETIME ft;
+FILETIME tmp;
+
+_int64 Delta(const SYSTEMTIME st1, const SYSTEMTIME st2) {
+	union timeunion {
+		FILETIME fileTime;
+		ULARGE_INTEGER ul;
+	};
+
+	timeunion ft1;
+	timeunion ft2;
+
+	SystemTimeToFileTime(&st1, &ft1.fileTime);
+	SystemTimeToFileTime(&st2, &ft2.fileTime);
+
+	return ft2.ul.QuadPart - ft1.ul.QuadPart;
+}
+
+void getInformation(TCHAR* fileName, __int64 currentTime) {
+
 	HANDLE h = CreateFile(fileName, GENERIC_READ, 0, 0, OPEN_EXISTING, 0, 0);
+	GetFileTime(h, &creationTime, &lastAccess, &fileWrite);
+	//		fileCreationTimeI64	130745358023566627	__int64
+	//		fileCreationTimeI64	130745358282766627	__int64
+	//		currentTime			130746528426480000	__int64
+	//		есть над чем работать: лонги как-то коряво работают. Перевел их в СистемТайм - все норм, если сравнивать лонги - все очень плохо
+	__int64 fileCreationTimeI64 = ((__int64(fileWrite.dwHighDateTime) << 32) | __int64(fileWrite.dwLowDateTime));//выскакивает разница в 3 часа
+
+	tmp.dwLowDateTime = (DWORD)fileCreationTimeI64;
+	tmp.dwHighDateTime = (DWORD)(fileCreationTimeI64 >> 32);
+	FileTimeToSystemTime(&tmp, &st);//разница в 3 часа с настоящим временем (отстает)
+
+	ft.dwLowDateTime = (DWORD)currentTime;
+	ft.dwHighDateTime = (DWORD)(currentTime >> 32);
+	FileTimeToSystemTime(&ft, &checkST);//переводит норм
+	_int64 i = Delta(st, checkST); // Какого хрена это 		i	1178285060000	__int64 !!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if (h != INVALID_HANDLE_VALUE)
 	{
 		DWORD dwSize = GetFileSize(h, 0);
@@ -63,8 +102,6 @@ void getInformation(TCHAR* fileName) {
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	SYSTEMTIME st;
-	FILETIME ft;
 	GetLocalTime(&st);
 	SystemTimeToFileTime(&st, &ft);
 	__int64 minTime = (__int64(ft.dwHighDateTime) << 32) | __int64(ft.dwLowDateTime);
@@ -76,7 +113,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	SetEnvironmentVariable(_T("NotepadTime"), wString);
 
 	LPCTSTR varName = _T("NotepadTime");
-	PTSTR buff = NULL;
+	TCHAR* buff = NULL;
 	DWORD dwResult = GetEnvironmentVariable(varName, buff, 0);
 	if (dwResult != 0)
 	{
@@ -89,10 +126,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	else {
 		_tprintf(TEXT(",%s,=<unknown value>\n"), varName);
 	}
+	__int64 currentTime = _wcstoui64(buff,NULL,10);
+	
+	tmp.dwLowDateTime = (DWORD)currentTime;
+	tmp.dwHighDateTime = (DWORD)(currentTime >> 32);
 	// endРихтер 
-	FILETIME creationTime;
-	FILETIME lastAccess;
-	FILETIME fileWrite;
+	
 	WIN32_FIND_DATA findFile;
 	TCHAR CurrentPath[MAX_PATH];
 	GetCurrentDirectory(MAX_PATH, CurrentPath);
@@ -100,8 +139,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	HANDLE handle = FindFirstFile(CurrentPath, &findFile);
 	while (handle != INVALID_HANDLE_VALUE)
 	{
-		GetFileTime(handle, &creationTime, &lastAccess, &fileWrite);
-		getInformation(findFile.cFileName);
+		getInformation(findFile.cFileName, currentTime);
 		if (FindNextFile(handle, &findFile) == FALSE)
 			break;
 	}
