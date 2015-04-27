@@ -7,6 +7,14 @@ BYTE LRU[] = { 0, 0, 0 };
 
 int cache[] = { -1, -1, -1, -1 };
 
+void startLRU()
+{
+	for (int i = 0; i < 4; i++)
+		cache[i] = -1;
+	for (int i = 0; i < 3; i++)
+		LRU[i] = 0;
+}
+
 void put(int key)
 {
 	if (contains(key)) return;

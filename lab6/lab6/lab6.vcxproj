@@ -79,14 +79,12 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="List.h" />
     <ClInclude Include="LRU.h" />
     <ClInclude Include="Methods.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="List.cpp" />
     <ClCompile Include="LRU.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Methods.cpp" />

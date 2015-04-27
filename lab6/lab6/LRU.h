@@ -4,3 +4,5 @@
 void put(int);
 
 void printCache();
+
+void startLRU();
