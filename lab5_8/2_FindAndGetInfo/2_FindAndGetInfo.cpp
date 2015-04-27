@@ -16,15 +16,49 @@ void getInformation(TCHAR* fileName) {
 		DWORD dwCount;
 		ReadFile(h, buf, dwSize, &dwCount, 0);
 		CloseHandle(h);
+		int size = 0;
+		int countOfLines = 0;
+		int lengthOfLine = 0;
 		int pnz = 0xFFFFFFFF;
 		if (IsTextUnicode(buf, dwCount, &pnz))
 		{
+			char *result = (char*)buf;
 			char *resAns = new char[dwCount + 1];
 			WideCharToMultiByte(CP_ACP, 0,(wchar_t*)buf, dwCount, resAns, (dwCount + 1) / 2, NULL, NULL);
-			resAns[(dwCount + 1) / 2] = 0;
+			resAns[(dwCount + 1) / 2] = '\0';
+			size = dwSize;
+			printf("The file size is %d\n", size);
+			for (int i = 0; i < (dwCount + 1) / 2; i++){
+				if (resAns[i] == '\n') {
+					continue;
+				}
+				if (resAns[i] == '\r' || i == (dwCount + 1) / 2 -1) {
+					countOfLines++;
+					printf("The length of %d line is %d\n",countOfLines, lengthOfLine);
+					lengthOfLine = 0;
+					continue;
+				}
+				lengthOfLine++;
+			}
+			
 		}
 		else {
-			
+			char *result = (char*)buf;
+			result[dwCount] = '\0';
+			size = dwSize;
+			printf("The file size is %d\n", size);
+			for (int i = 1; i < dwCount; i++){
+				if (result[i] == '\n') {
+					continue;
+				}
+				if (result[i] == '\r' || i == dwCount - 1) {
+					countOfLines++;
+					printf("The length of %d line is %d\n", countOfLines, lengthOfLine);
+					lengthOfLine = 0;
+					continue;
+				}
+				lengthOfLine++;
+			}
 		}
 	}
 }
