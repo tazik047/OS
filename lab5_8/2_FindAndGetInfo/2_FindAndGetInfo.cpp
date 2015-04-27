@@ -28,7 +28,7 @@ void getInformation(TCHAR* fileName) {
 			resAns[(dwCount + 1) / 2] = '\0';
 			size = dwSize;
 			printf("The file size is %d\n", size);
-			for (int i = 0; i < (dwCount + 1) / 2; i++){
+			for (int i = 1; i < (dwCount + 1) / 2; i++){
 				if (resAns[i] == '\n') {
 					continue;
 				}
@@ -47,7 +47,7 @@ void getInformation(TCHAR* fileName) {
 			result[dwCount] = '\0';
 			size = dwSize;
 			printf("The file size is %d\n", size);
-			for (int i = 1; i < dwCount; i++){
+			for (int i = 0; i < dwCount; i++){
 				if (result[i] == '\n') {
 					continue;
 				}
