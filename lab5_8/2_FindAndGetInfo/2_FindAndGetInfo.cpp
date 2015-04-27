@@ -135,9 +135,14 @@ int _tmain(int argc, _TCHAR* argv[])
 	// endРихтер 
 	WIN32_FIND_DATA wfd;
 	HANDLE h = FindFirstFile(varName, &wfd);
+	FILETIME creationTime;
+	FILETIME lastAccess;
+	FILETIME fileWrite;
 	while (FindNextFile(h, &wfd))
 	{
+		if (GetFileTime(h, &creationTime,&lastAccess,&fileWrite) != 0) {
 
+		}
 	}
 	return 0;
 }
