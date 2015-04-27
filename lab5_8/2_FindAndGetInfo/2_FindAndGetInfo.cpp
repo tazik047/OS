@@ -4,9 +4,6 @@
 #include "stdafx.h"
 #include <Windows.h>
 
-// a - path
-// b - address of STARTUPINFO
-// c - address of PROCESS_INFORMATION
 void getInformation(TCHAR* fileName) {
 	HANDLE h = CreateFile(fileName, GENERIC_READ, 0, 0, OPEN_EXISTING, 0, 0);
 	if (h != INVALID_HANDLE_VALUE)
@@ -34,7 +31,7 @@ void getInformation(TCHAR* fileName) {
 				}
 				if (resAns[i] == '\r' || i == (dwCount + 1) / 2 -1) {
 					countOfLines++;
-					printf("The length of %d line is %d\n",countOfLines, lengthOfLine);
+					printf("The length of %d line is %d\n", countOfLines, lengthOfLine);
 					lengthOfLine = 0;
 					continue;
 				}
@@ -62,67 +59,27 @@ void getInformation(TCHAR* fileName) {
 		}
 	}
 }
-void info(TCHAR* folder, TCHAR* fileName, int length)
-{
-	SetPriorityClass(GetCurrentProcess(), BELOW_NORMAL_PRIORITY_CLASS);
-	_tprintf(_T("Found file: %s length: %d\n"), fileName, length);
-	int stringCount = 0;
-	FILE* pFile;
-	char mystring[500];
-	TCHAR temp[MAX_PATH];
-	_tcscpy(temp, folder);
-	_tcscat(temp, __TEXT("/"));
-	_tcscat(temp, fileName);
 
-	pFile = _tfopen(temp, L"r");
-	if (pFile == NULL) perror("Error opening file");
-	else {
-		while (fgets(mystring, 500, pFile) != NULL)
-		{
-			stringCount++;
-			int l = strlen(mystring);
-			printf("String %d : length = %d\n", stringCount, l);
-
-		}
-		printf("We have %d string in our file\n ", stringCount);
-		fclose(pFile);
-	}
-
-
-}
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	/*DWORD count = 0;
-	TCHAR temp[MAX_PATH];
-	WIN32_FIND_DATA findFile;
-	TCHAR CurrentPath[MAX_PATH];
-	GetCurrentDirectory(MAX_PATH, CurrentPath);
-	_tcscpy(temp, CurrentPath);
-	_tcscat(temp, __TEXT("/*.txt"));
-	HANDLE handle = FindFirstFile(temp, &findFile);
-	while (handle != INVALID_HANDLE_VALUE)
-	{
-		info(CurrentPath, findFile.cFileName, findFile.nFileSizeLow);
-		if (FindNextFile(handle, &findFile) == FALSE)
-			break;
-	}
-	system("pause");
-	return 0;*/
-	getInformation(_T("unicode.txt"));
-	LPCTSTR varName = _T("NotepadTime");
-	// вообще, по-идее, все должно быть проще. дальше код и цитата с Рихтера
+	SYSTEMTIME st;
+	FILETIME ft;
+	GetLocalTime(&st);
+	SystemTimeToFileTime(&st, &ft);
+	__int64 minTime = (__int64(ft.dwHighDateTime) << 32) | __int64(ft.dwLowDateTime);
+	char value[MAX_PATH];
+	//*((__int64*)value) = minTime;
+	_i64toa(minTime, value, 10);
+	wchar_t* wString = new wchar_t[4096];
+	MultiByteToWideChar(CP_ACP, 0, value, -1, wString, 4096);
+	SetEnvironmentVariable(_T("NotepadTime"), wString);
 
+	LPCTSTR varName = _T("NotepadTime");
 	PTSTR buff = NULL;
-	/* Функция возвращает либо количество символов, скопированных в буфер,
-	* либо 0, если ей не удалось обнаружить переменную окружения с таким именем.
-	* Однако размер значения переменной окружения заранее не известен, поэтому при
-	* передаче в параметре cchValue значения 0 функция GetEnvironmentVariable воз-
-	* вращает размер (число символов плюс завершающий NULL-символ).*/
 	DWORD dwResult = GetEnvironmentVariable(varName, buff, 0);
 	if (dwResult != 0)
 	{
-		// выделяем буфер для значения переменной окружения
 		DWORD size = dwResult * sizeof(TCHAR);
 		buff = (PTSTR)malloc(size);
 		GetEnvironmentVariable(varName, buff, size);
@@ -133,17 +90,22 @@ int _tmain(int argc, _TCHAR* argv[])
 		_tprintf(TEXT(",%s,=<unknown value>\n"), varName);
 	}
 	// endРихтер 
-	WIN32_FIND_DATA wfd;
-	HANDLE h = FindFirstFile(varName, &wfd);
 	FILETIME creationTime;
 	FILETIME lastAccess;
 	FILETIME fileWrite;
-	while (FindNextFile(h, &wfd))
+	WIN32_FIND_DATA findFile;
+	TCHAR CurrentPath[MAX_PATH];
+	GetCurrentDirectory(MAX_PATH, CurrentPath);
+	_tcscat(CurrentPath, __TEXT("\\*.txt"));
+	HANDLE handle = FindFirstFile(CurrentPath, &findFile);
+	while (handle != INVALID_HANDLE_VALUE)
 	{
-		if (GetFileTime(h, &creationTime,&lastAccess,&fileWrite) != 0) {
-
-		}
+		GetFileTime(handle, &creationTime, &lastAccess, &fileWrite);
+		getInformation(findFile.cFileName);
+		if (FindNextFile(handle, &findFile) == FALSE)
+			break;
 	}
+	system("pause");
 	return 0;
 }
 

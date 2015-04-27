@@ -11,14 +11,18 @@ int _tmain(int argc, _TCHAR* argv[])
 	memset(&si, 0, sizeof(STARTUPINFO));
 	si.cb = sizeof(STARTUPINFO);
 	SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
-	SYSTEMTIME st; 
+
+	SYSTEMTIME st;
 	FILETIME ft;
 	GetLocalTime(&st);
 	SystemTimeToFileTime(&st, &ft);
-	unsigned _int64 minTime = ((_int64)ft.dwHighDateTime << 32) | ft.dwLowDateTime;
-	TCHAR value[MAX_PATH];
-	*((_int64*)value) = minTime;
-	SetEnvironmentVariable(_T("NotepadTime"), value);
+	__int64 minTime = (__int64(ft.dwHighDateTime) << 32) | __int64(ft.dwLowDateTime);
+	char value[MAX_PATH];
+	//*((__int64*)value) = minTime;
+	_i64toa(minTime, value, 10);
+	wchar_t* wString = new wchar_t[4096];
+	MultiByteToWideChar(CP_ACP, 0, value, -1, wString, 4096);
+	SetEnvironmentVariable(_T("NotepadTime"), wString);
 
 	TCHAR ProcName[] = _T("1_Notepad.exe");
 	BOOL flag = CreateUnsuspendedProcess(ProcName, &si, &pi);
