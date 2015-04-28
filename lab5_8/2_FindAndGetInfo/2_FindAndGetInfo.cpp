@@ -33,7 +33,6 @@ void getInformation(TCHAR* fileName, __int64 currentTime) {
 	if (compTime != 1) {
 		return;
 	}
-	_tprintf(TEXT(",=<unknown value>"));
 	if (h != INVALID_HANDLE_VALUE)
 	{
 		DWORD dwSize = GetFileSize(h, 0);
@@ -91,11 +90,7 @@ void getInformation(TCHAR* fileName, __int64 currentTime) {
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	STARTUPINFO si;
-	PROCESS_INFORMATION pi;
-	memset(&si, 0, sizeof(STARTUPINFO));
-	si.cb = sizeof(STARTUPINFO);
-	SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
+	//SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
 	//GetLocalTime(&st);
 	//SystemTimeToFileTime(&st, &ft);
 	//__int64 minTime = (__int64(ft.dwHighDateTime) << 32) | __int64(ft.dwLowDateTime);
@@ -105,6 +100,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//wchar_t* wString = new wchar_t[4096];
 	//MultiByteToWideChar(CP_ACP, 0, value, -1, wString, 4096);
 	//SetEnvironmentVariable(_T("NotepadTime"), wString);
+	
 	
 	LPCTSTR varName = _T("NotepadTime");
 	TCHAR* buff = NULL;
@@ -118,14 +114,13 @@ int _tmain(int argc, _TCHAR* argv[])
 		//free(buff);
 	}
 	else {
-		_tprintf(TEXT(",%s,=<unknown value>\n"), varName);
+		_tprintf(TEXT("%s,=<unknown value>\n"), varName);
+		exit(1);
 	}
 	__int64 currentTime = _wcstoui64(buff,NULL,10);
-	
 	tmp.dwLowDateTime = (DWORD)currentTime;
 	tmp.dwHighDateTime = (DWORD)(currentTime >> 32);
 	// endÐèõòåð 
-	
 	WIN32_FIND_DATA findFile;
 	TCHAR CurrentPath[MAX_PATH];
 	GetCurrentDirectory(MAX_PATH, CurrentPath);
@@ -133,13 +128,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	HANDLE handle = FindFirstFile(CurrentPath, &findFile);
 	while (handle != INVALID_HANDLE_VALUE)
 	{
+		_tprintf(TEXT("%s,=<unknown value>\n"), findFile.cFileName);
 		getInformation(findFile.cFileName, currentTime);
 		if (FindNextFile(handle, &findFile) == FALSE)
 			break;
 	}
-	WaitForSingleObject(pi.hProcess, INFINITE);
-	CloseHandle(pi.hThread);
-	CloseHandle(pi.hProcess);
 	system("pause");
 	return 0;
 }
