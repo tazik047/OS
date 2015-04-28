@@ -12,39 +12,28 @@ SYSTEMTIME checkST;
 FILETIME ft;
 FILETIME tmp;
 
-_int64 Delta(const SYSTEMTIME st1, const SYSTEMTIME st2) {
-	union timeunion {
-		FILETIME fileTime;
-		ULARGE_INTEGER ul;
-	};
-
-	timeunion ft1;
-	timeunion ft2;
-
-	SystemTimeToFileTime(&st1, &ft1.fileTime);
-	SystemTimeToFileTime(&st2, &ft2.fileTime);
-
-	return ft2.ul.QuadPart - ft1.ul.QuadPart;
-}
-
 void getInformation(TCHAR* fileName, __int64 currentTime) {
 
 	HANDLE h = CreateFile(fileName, GENERIC_READ, 0, 0, OPEN_EXISTING, 0, 0);
 	GetFileTime(h, &creationTime, &lastAccess, &fileWrite);
-	//		fileCreationTimeI64	130745358023566627	__int64
-	//		fileCreationTimeI64	130745358282766627	__int64
-	//		currentTime			130746528426480000	__int64
-	//		есть над чем работать: лонги как-то кор€во работают. ѕеревел их в —истем“айм - все норм, если сравнивать лонги - все очень плохо
 	__int64 fileCreationTimeI64 = ((__int64(fileWrite.dwHighDateTime) << 32) | __int64(fileWrite.dwLowDateTime));//выскакивает разница в 3 часа
 
 	tmp.dwLowDateTime = (DWORD)fileCreationTimeI64;
 	tmp.dwHighDateTime = (DWORD)(fileCreationTimeI64 >> 32);
 	FileTimeToSystemTime(&tmp, &st);//разница в 3 часа с насто€щим временем (отстает)
+	st.wHour = st.wHour + 3;
+	SystemTimeToFileTime(&st, &tmp);//костыль но пусть хоть так пока
 
 	ft.dwLowDateTime = (DWORD)currentTime;
 	ft.dwHighDateTime = (DWORD)(currentTime >> 32);
 	FileTimeToSystemTime(&ft, &checkST);//переводит норм
-	_int64 i = Delta(st, checkST); //  акого хрена это 		i	1178285060000	__int64 !!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+	LONG compTime = CompareFileTime(&tmp, &ft);
+	if (compTime != 1) {
+		return;
+	}
+	_tprintf(TEXT(",=<unknown value>"));
 	if (h != INVALID_HANDLE_VALUE)
 	{
 		DWORD dwSize = GetFileSize(h, 0);
@@ -102,16 +91,21 @@ void getInformation(TCHAR* fileName, __int64 currentTime) {
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	GetLocalTime(&st);
-	SystemTimeToFileTime(&st, &ft);
-	__int64 minTime = (__int64(ft.dwHighDateTime) << 32) | __int64(ft.dwLowDateTime);
-	char value[MAX_PATH];
-	//*((__int64*)value) = minTime;
-	_i64toa(minTime, value, 10);
-	wchar_t* wString = new wchar_t[4096];
-	MultiByteToWideChar(CP_ACP, 0, value, -1, wString, 4096);
-	SetEnvironmentVariable(_T("NotepadTime"), wString);
-
+	STARTUPINFO si;
+	PROCESS_INFORMATION pi;
+	memset(&si, 0, sizeof(STARTUPINFO));
+	si.cb = sizeof(STARTUPINFO);
+	SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
+	//GetLocalTime(&st);
+	//SystemTimeToFileTime(&st, &ft);
+	//__int64 minTime = (__int64(ft.dwHighDateTime) << 32) | __int64(ft.dwLowDateTime);
+	//char value[MAX_PATH];
+	////*((__int64*)value) = minTime;
+	//_i64toa(minTime, value, 10);
+	//wchar_t* wString = new wchar_t[4096];
+	//MultiByteToWideChar(CP_ACP, 0, value, -1, wString, 4096);
+	//SetEnvironmentVariable(_T("NotepadTime"), wString);
+	
 	LPCTSTR varName = _T("NotepadTime");
 	TCHAR* buff = NULL;
 	DWORD dwResult = GetEnvironmentVariable(varName, buff, 0);
@@ -143,6 +137,9 @@ int _tmain(int argc, _TCHAR* argv[])
 		if (FindNextFile(handle, &findFile) == FALSE)
 			break;
 	}
+	WaitForSingleObject(pi.hProcess, INFINITE);
+	CloseHandle(pi.hThread);
+	CloseHandle(pi.hProcess);
 	system("pause");
 	return 0;
 }
