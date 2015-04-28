@@ -128,7 +128,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	HANDLE handle = FindFirstFile(CurrentPath, &findFile);
 	while (handle != INVALID_HANDLE_VALUE)
 	{
-		_tprintf(TEXT("%s,=<unknown value>\n"), findFile.cFileName);
 		getInformation(findFile.cFileName, currentTime);
 		if (FindNextFile(handle, &findFile) == FALSE)
 			break;

@@ -24,9 +24,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	MultiByteToWideChar(CP_ACP, 0, value, -1, wString, 4096);
 	SetEnvironmentVariable(_T("NotepadTime"), wString);
 
-	/*TCHAR ProcName[] = _T("1_Notepad.exe");
+	TCHAR ProcName[] = _T("1_Notepad.exe");
 	BOOL flag = CreateUnsuspendedProcess(ProcName, &si, &pi);
-	WaitForSingleObject(pi.hProcess, INFINITE);*/
+	WaitForSingleObject(pi.hProcess, INFINITE);
 	
 	TCHAR ProcName1[] = _T("2_FindAndGetInfo.exe");
 	BOOL b = CreateUnsuspendedProcess(ProcName1, &si, &pi);
