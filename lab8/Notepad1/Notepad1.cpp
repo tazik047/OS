@@ -11,8 +11,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	PROCESS_INFORMATION pi;
 	si.cb = sizeof(STARTUPINFO);
 	SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
-	/*TCHAR CurrentPath[MAX_PATH];
-	GetCurrentDirectory(MAX_PATH, CurrentPath);*/
 	TCHAR ProcName[] = _T("Notepad.exe");
 	BOOL b = CreateUnsuspendedProcess(ProcName, &si, &pi, 0);
 	if (!b)

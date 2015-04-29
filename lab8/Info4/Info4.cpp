@@ -5,10 +5,12 @@
 #include <Windows.h>
 #include <TlHelp32.h>
 #include <Psapi.h>
+#include <locale.h>
 
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	_tsetlocale(LC_ALL, _T("Russian"));
 	//solved solution for the task lies here:
 	//msdn.microsoft.com/en-us/library/windows/desktop/ms686701(v=vs.85).aspx
 
@@ -40,7 +42,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	while (Process32Next(hSnapshot, &pe))
 	{
 		hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pe.th32ProcessID);
-		_tprintf(_T("%d. cntThreads: %d, szExeFile: %s\n"), count++, pe.cntThreads, pe.szExeFile);
+		_tprintf(_T("%d. ѕотоков: %d, »м€: %s, PID: %d\n"), count++, pe.cntThreads, pe.szExeFile, pe.th32ProcessID);
 
 		// следующие вз€то с той лабы. вроде работает. 
 		// хот€ мельникова говорила делать через Module32First/Module32Next

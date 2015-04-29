@@ -8,84 +8,67 @@
 FILETIME creationTime;
 FILETIME lastAccess;
 FILETIME fileWrite;
-//SYSTEMTIME st;
-//SYSTEMTIME checkST;
 FILETIME ft;
-FILETIME tmp;
 
+BOOL IsUnicode(PBYTE file)
+{
+	return(file[0] == 0xfe && file[1] == 0xff) || (file[0] == 0xff && file[1] == 0xfe);
+}
 
-void getInformation(TCHAR* fileName, __int64 currentTime) {
+template<typename T>
+void countStrAndLength(T* str, int size)
+{
+	int index = 0;
+	int count = 0;
+	int length = 0;
+	while (index < size)
+	{
+		if (str[index] == '\r' && index + 1 != size && str[index + 1] == '\n') // новая строка
+		{
+			_tprintf(_T("\tВ строке № %d %d символов\n"), ++count, length);
+			length = 0;
+			index+=2;
+			continue;
+		}
+		length++;
+		index++;
+	}
+	if (length != 0){
+		_tprintf(_T("\tВ строке № %d %d символов\n"), ++count, length);
+	}
+}
 
-	HANDLE h = CreateFile(fileName, GENERIC_READ, 0, 0, OPEN_EXISTING, 0, 0);
+void getInformation(TCHAR* fileName) {
+
+	HANDLE h = CreateFile(fileName, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
 	GetFileTime(h, &creationTime, &lastAccess, &fileWrite);
-	/*__int64 fileCreationTimeI64 = fileWrite.dwHighDateTime;
-	fileCreationTimeI64 = (fileCreationTimeI64 << 32) | fileWrite.dwLowDateTime;*/
-	/*
-	tmp.dwLowDateTime = (DWORD)fileCreationTimeI64;
-	tmp.dwHighDateTime = (DWORD)(fileCreationTimeI64 >> 32);
-	FileTimeToSystemTime(&tmp, &st);//разница в 3 часа с настоящим временем (отстает)
-	st.wHour = st.wHour + 3;
-	SystemTimeToFileTime(&st, &tmp);//костыль но пусть хоть так пока*/
-
-	ft.dwLowDateTime = (DWORD)currentTime;
-	ft.dwHighDateTime = (DWORD)(currentTime >> 32);
-	//FileTimeToSystemTime(&ft, &checkST);//переводит норм
-
 
 	LONG compTime = CompareFileTime(&fileWrite, &ft);
 	if (compTime != 1) {
+		CloseHandle(h);
 		return;
 	}
 	if (h != INVALID_HANDLE_VALUE)
 	{
 		DWORD dwSize = GetFileSize(h, 0);
-		PBYTE buf = new BYTE[dwSize + 1];
+		PBYTE buf = new BYTE[dwSize];
 		DWORD dwCount;
 		ReadFile(h, buf, dwSize, &dwCount, 0);
 		CloseHandle(h);
-		int size = 0;
-		int countOfLines = 0;
-		int lengthOfLine = 0;
-		int pnz = 0xFFFFFFFF;
-		if (IsTextUnicode(buf, dwCount, &pnz))
+		BOOL isUnicode = IsUnicode(buf);
+		_tprintf(_T("Файл: %s\nРазмер файла: %d. Файл сохранен в %s\n"),fileName, dwSize, (isUnicode ? _T("UNICODE") : _T("ANSI")));
+		if (isUnicode)
 		{
-			char *result = (char*)buf;
-			char *resAns = new char[dwCount + 1];
-			WideCharToMultiByte(CP_ACP, 0, (wchar_t*)buf, dwCount, resAns, (dwCount + 1) / 2, NULL, NULL);
-			resAns[(dwCount + 1) / 2] = '\0';
-			size = dwSize;
-			printf("The file size is %d\n", size);
-			for (int i = 1; i < (dwCount + 1) / 2; i++){
-				if (resAns[i] == '\n') {
-					continue;
-				}
-				if (resAns[i] == '\r' || i == (dwCount + 1) / 2 - 1) {
-					countOfLines++;
-					printf("The length of %d line is %d\n", countOfLines, lengthOfLine);
-					lengthOfLine = 0;
-					continue;
-				}
-				lengthOfLine++;
-			}
-
+			wchar_t* buf_wc = (wchar_t *)buf;
+			buf_wc++; // пропускаем BOM
+			countStrAndLength(buf_wc, dwSize / 2 - 1);
+			delete[] --buf_wc;
 		}
-		else {
-			char *result = (char*)buf;
-			result[dwCount] = '\0';
-			size = dwSize;
-			printf("The file size is %d\n", size);
-			for (int i = 0; i < dwCount; i++){
-				if (result[i] == '\n') {
-					continue;
-				}
-				if (result[i] == '\r' || i == dwCount - 1) {
-					countOfLines++;
-					printf("The length of %d line is %d\n", countOfLines, lengthOfLine);
-					lengthOfLine = 0;
-					continue;
-				}
-				lengthOfLine++;
-			}
+		else
+		{
+			char* buf_c = (char *)buf;
+			countStrAndLength(buf_c, dwSize);
+			delete[] buf_c;
 		}
 	}
 }
@@ -102,37 +85,21 @@ __int64 toInt64(TCHAR* str){
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	_tsetlocale(LC_ALL, _T("Russian"));
-
-	//SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
-	//GetLocalTime(&st);
-	//SystemTimeToFileTime(&st, &ft);
-	//__int64 minTime = (__int64(ft.dwHighDateTime) << 32) | __int64(ft.dwLowDateTime);
-	//char value[MAX_PATH];
-	////*((__int64*)value) = minTime;
-	//_i64toa(minTime, value, 10);
-	//wchar_t* wString = new wchar_t[4096];
-	//MultiByteToWideChar(CP_ACP, 0, value, -1, wString, 4096);
-	//SetEnvironmentVariable(_T("NotepadTime"), wString);
-
-	
+	_tsetlocale(LC_ALL, _T("Russian"));	
 
 	LPCTSTR varName = _T("Time");
 	TCHAR buff[MAX_PATH];
 	GetEnvironmentVariable(varName, buff, MAX_PATH);
 	__int64 currentTime = toInt64(buff);
 
-	tmp.dwLowDateTime = (DWORD)currentTime;
-	tmp.dwHighDateTime = (DWORD)(currentTime >> 32);
-	WIN32_FIND_DATA findFile;
-	/*TCHAR CurrentPath[MAX_PATH];
-	GetCurrentDirectory(MAX_PATH, CurrentPath);
-	_tcscat_s(CurrentPath, _T("\\*.txt"));*/
-	HANDLE handle = FindFirstFile(_T("*.txt"), &findFile);
-	while (handle != INVALID_HANDLE_VALUE)
+	ft.dwLowDateTime = (DWORD)currentTime;
+	ft.dwHighDateTime = (DWORD)(currentTime >> 32);
+	WIN32_FIND_DATA fileData;
+	HANDLE h = FindFirstFile(_T("*.txt"), &fileData);
+	while (h != INVALID_HANDLE_VALUE)
 	{
-		getInformation(findFile.cFileName, currentTime);
-		if (!FindNextFile(handle, &findFile))
+		getInformation(fileData.cFileName);
+		if (!FindNextFile(h, &fileData))
 			break;
 	}
 	system("pause");
