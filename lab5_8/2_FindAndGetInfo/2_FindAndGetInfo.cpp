@@ -75,7 +75,7 @@ void getInformation(TCHAR* fileName, __int64 currentTime) {
 				if (result[i] == '\n') {
 					continue;
 				}
-				if (result[i] == '\r' || i == dwCount - 1) {
+				if (result[i] == '\r' || i == dwCount -1) {
 					countOfLines++;
 					printf("The length of %d line is %d\n", countOfLines, lengthOfLine);
 					lengthOfLine = 0;

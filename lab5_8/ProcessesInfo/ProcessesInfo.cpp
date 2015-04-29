@@ -2,9 +2,13 @@
 //
 
 #include "stdafx.h"
+#include <vector>
 #include <Windows.h>
 #include <tlhelp32.h>
 #include <psapi.h>
+
+using namespace std;
+vector<HANDLE> names;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -33,61 +37,61 @@ int _tmain(int argc, _TCHAR* argv[])
 	HMODULE hMods[1024];
 	HANDLE hProcess;
 	DWORD cbNeeded, i, count = 0;
+	MODULEENTRY32 me;
+	me.dwSize = sizeof(MODULEENTRY32);
+	HANDLE hModSnap;
 	while (Process32Next(hSnapshot, &pe))
 	{
 		_tprintf(_T("%d. cntThreads: %d, szExeFile: %s\n"), count++, pe.cntThreads, pe.szExeFile);
+		//getModuleInfo(pe.th32ProcessID);
+		//====================UNWORKING
 
-		// следующие взято с той лабы. вроде работает. 
+		_tprintf(_T("%d\n"), pe.th32ProcessID);
+		//HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pe.th32ProcessID);
+		hModSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, 0);// pe.th32ProcessID);
+
+		if (hModSnap == INVALID_HANDLE_VALUE)
+		{
+			_tprintf(_T("Error\n"));
+			return -1;
+		}
+
+		BOOL bMod = Module32First(hModSnap, &me);
+		if (!bMod)
+		{
+			_tprintf(_T("Error"));
+			return -1;
+		}
+
+		while (Module32Next(hModSnap, &me))
+		{
+			//тут явно должно быть не это
+			_tprintf(TEXT("\n\t %s"), me.szModule);
+		}
+
+
+		//====================WORKS
+		/*
+		// следующие взято с той лабы. вроде работает.
 		// хотя Мельникова говорила делать через Module32First/Module32Next
 		hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pe.th32ProcessID);
 		if (EnumProcessModules(hProcess, hMods, sizeof(hMods), &cbNeeded))
 		{
-			for (i = 0; i < (cbNeeded / sizeof(HMODULE)); i++)
-			{
-				TCHAR szModName[MAX_PATH];
+		for (i = 0; i < (cbNeeded / sizeof(HMODULE)); i++)
+		{
+		TCHAR szModName[MAX_PATH];
 
-				// Get the full path to the module's file.
-				if (GetModuleFileNameEx(hProcess, hMods[i], szModName, sizeof(szModName) / sizeof(TCHAR)))
-				{
-					// Print the module name and handle value.
-					_tprintf(_T("\t%s\n"), szModName);
-				}
-			}
+		// Get the full path to the module's file.
+		if (GetModuleFileNameEx(hProcess, hMods[i], szModName, sizeof(szModName) / sizeof(TCHAR)))
+		{
+		// Print the module name and handle value.
+		_tprintf(_T("\t%s\n"), szModName);
 		}
+		}
+		}*/
 		_tprintf(_T("\n"));
 	}
 	CloseHandle(hSnapshot);
 	system("pause");
-	return 0;
-}
-
-// doesn't work
-// попытка сделать как говорила Мельникова. не знаю, где тут инфу о dll взять. надо погуглить...
-int getModuleInfo(DWORD id)
-{
-	MODULEENTRY32 me;
-	HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, id);
-	HANDLE hModSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, id);
-	if (hModSnap == INVALID_HANDLE_VALUE)
-	{
-		_tprintf(_T("Error"));
-		return -1;
-	}
-	me.dwSize = sizeof(MODULEENTRY32);
-
-	BOOL bMod = Module32First(hModSnap, &me);
-	if (!bMod)
-	{
-		_tprintf(_T("Error"));
-		return -1;
-	}
-
-	while (Module32Next(hModSnap, &me))
-	{
-		//тут явно должно быть не это
-		_tprintf(_T("%s \n", me.szModule));
-	}
-
-	CloseHandle(hModSnap);
 	return 0;
 }

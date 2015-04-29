@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "3_RunBoth", "3_RunBoth\3_Ru
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ProcessesInfo", "ProcessesInfo\ProcessesInfo.vcxproj", "{9018FF28-0043-4849-A8AD-58AEABE0C0AB}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestMSDN", "TestMSDN\TestMSDN.vcxproj", "{E962EA4B-0CEB-4C00-B2AD-5F63B0B648E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -33,6 +35,10 @@ Global
 		{9018FF28-0043-4849-A8AD-58AEABE0C0AB}.Debug|Win32.Build.0 = Debug|Win32
 		{9018FF28-0043-4849-A8AD-58AEABE0C0AB}.Release|Win32.ActiveCfg = Release|Win32
 		{9018FF28-0043-4849-A8AD-58AEABE0C0AB}.Release|Win32.Build.0 = Release|Win32
+		{E962EA4B-0CEB-4C00-B2AD-5F63B0B648E2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E962EA4B-0CEB-4C00-B2AD-5F63B0B648E2}.Debug|Win32.Build.0 = Debug|Win32
+		{E962EA4B-0CEB-4C00-B2AD-5F63B0B648E2}.Release|Win32.ActiveCfg = Release|Win32
+		{E962EA4B-0CEB-4C00-B2AD-5F63B0B648E2}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
