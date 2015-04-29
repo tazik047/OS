@@ -2,13 +2,9 @@
 //
 
 #include "stdafx.h"
-#include <vector>
 #include <Windows.h>
 #include <tlhelp32.h>
 #include <psapi.h>
-
-using namespace std;
-vector<HANDLE> names;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -66,7 +62,7 @@ int getModuleInfo(DWORD id)
 	if (!Module32First(hModuleSnap, &me))
 	{
 		_tprintf(_T("Error"));
-		CloseHandle(hModuleSnap);           // clean the snapshot object
+		CloseHandle(hModuleSnap); // clean the snapshot object
 		return -1;
 	}
 	while (Module32Next(hModuleSnap, &me))
