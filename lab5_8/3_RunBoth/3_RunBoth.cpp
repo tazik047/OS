@@ -3,9 +3,29 @@
 
 #include "stdafx.h"
 #include <Windows.h>
+#include <locale>
 #define CreateUnsuspendedProcess(a, b, c) CreateProcess(0, a, 0, 0, 0, 0, 0, 0, b, c);
+//BOOL WINAPI CreateProcess(
+//	LPCTSTR lpApplicationName, // Ім'я додатка
+//	LPTSTR lpCommandLine,// Командний рядок
+//	LPSECURITY_ATTRIBUTES lpProcessAttributes, // Атрибути
+//	LPSECURITY_ATTRIBUTES lpThreadAttributes,  // безпеки
+//	BOOL bInheritHandles, // Спадкування дескрипторів
+//	DWORD dwCreationFlags, // Прапорці створення
+//	LPVOID lpEnvironment, // Середа
+//	LPCTSTR lpCurrentDirectory,// поточний каталог
+//	LPSTARTUPINFO lpStartupInfo, // Структура з вхідними даними
+//	LPPROCESS_INFORMATION lpProcessInformation
+//	// Структура з дескрипторами створеного процесу та потоку
+//	);
+
 int _tmain(int argc, _TCHAR* argv[])
 {
+	_tsetlocale(LC_ALL, _T("Russian"));
+	_tprintf(_T("Сколько файлов желаете создать???:\n"));
+	size_t c = -1;
+	int count = 0;
+	_tscanf_s(_T("%d"), &c);
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;
 	memset(&si, 0, sizeof(STARTUPINFO));
@@ -23,11 +43,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	wchar_t* wString = new wchar_t[4096];
 	MultiByteToWideChar(CP_ACP, 0, value, -1, wString, 4096);
 	SetEnvironmentVariable(_T("NotepadTime"), wString);
-
-	TCHAR ProcName[] = _T("1_Notepad.exe");
-	BOOL flag = CreateUnsuspendedProcess(ProcName, &si, &pi);
-	WaitForSingleObject(pi.hProcess, INFINITE);
-	
+	while (count < c) {
+		TCHAR ProcName[] = _T("1_Notepad.exe");
+		BOOL flag = CreateUnsuspendedProcess(ProcName, &si, &pi);
+		WaitForSingleObject(pi.hProcess, INFINITE);
+		count++;
+	}
 	TCHAR ProcName1[] = _T("2_FindAndGetInfo.exe");
 	BOOL b = CreateUnsuspendedProcess(ProcName1, &si, &pi);
 	WaitForSingleObject(pi.hProcess, INFINITE);

@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include <Windows.h>
+#include <locale>
 
 FILETIME creationTime;
 FILETIME lastAccess;
@@ -46,17 +47,18 @@ void getInformation(TCHAR* fileName, __int64 currentTime) {
 		int pnz = 0xFFFFFFFF;
 		if (IsTextUnicode(buf, dwCount, &pnz))
 		{
+			_tprintf(_T("Файл с именем %s записан в Юникоде\n"), fileName);
 			char *result = (char*)buf;
 			char *resAns = new char[dwCount + 1];
 			WideCharToMultiByte(CP_ACP, 0,(wchar_t*)buf, dwCount, resAns, (dwCount + 1) / 2, NULL, NULL);
 			resAns[(dwCount + 1) / 2] = '\0';
 			size = dwSize;
 			printf("The file size is %d\n", size);
-			for (int i = 1; i < (dwCount + 1) / 2; i++){
+			for (int i = 1; i <= (dwCount + 1) / 2; i++){
 				if (resAns[i] == '\n') {
 					continue;
 				}
-				if (resAns[i] == '\r' || i == (dwCount + 1) / 2 -1) {
+				if (resAns[i] == '\r' || i == (dwCount + 1) / 2) {
 					countOfLines++;
 					printf("The length of %d line is %d\n", countOfLines, lengthOfLine);
 					lengthOfLine = 0;
@@ -67,15 +69,16 @@ void getInformation(TCHAR* fileName, __int64 currentTime) {
 			
 		}
 		else {
+			_tprintf(_T("Файл с именем %s записан в ANSI\n"), fileName);
 			char *result = (char*)buf;
 			result[dwCount] = '\0';
 			size = dwSize;
 			printf("The file size is %d\n", size);
-			for (int i = 0; i < dwCount; i++){
+			for (int i = 0; i <= dwCount; i++){
 				if (result[i] == '\n') {
 					continue;
 				}
-				if (result[i] == '\r' || i == dwCount -1) {
+				if (result[i] == '\r' || i == dwCount) {
 					countOfLines++;
 					printf("The length of %d line is %d\n", countOfLines, lengthOfLine);
 					lengthOfLine = 0;
@@ -101,7 +104,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//MultiByteToWideChar(CP_ACP, 0, value, -1, wString, 4096);
 	//SetEnvironmentVariable(_T("NotepadTime"), wString);
 	
-	
+	_tsetlocale(LC_ALL, _T("Russian"));
 	LPCTSTR varName = _T("NotepadTime");
 	TCHAR* buff = NULL;
 	DWORD dwResult = GetEnvironmentVariable(varName, buff, 0);
