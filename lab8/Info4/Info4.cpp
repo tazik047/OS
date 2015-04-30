@@ -1,96 +1,92 @@
-// Info4.cpp: определяет точку входа для консольного приложения.
-//
-
 #include "stdafx.h"
 #include <Windows.h>
-#include <TlHelp32.h>
-#include <Psapi.h>
-#include <locale.h>
-
+#include <tlhelp32.h>
+#include <psapi.h>
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	_tsetlocale(LC_ALL, _T("Russian"));
-	//solved solution for the task lies here:
-	//msdn.microsoft.com/en-us/library/windows/desktop/ms686701(v=vs.85).aspx
+	HANDLE hProcSnap, hModSnap;
+	PROCESSENTRY32 procEntry;
+	MODULEENTRY32 modEntry;
+	DWORD procCount = 1, modCount = 1;
 
-	// TH32CS_SNAPPROCESS - includes all processes in the system in the snapshot
-	HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-	if (hSnapshot == INVALID_HANDLE_VALUE)
+	hProcSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0); //TH32CS_SNAPPROCESS – інформація про процеси
+	if (hProcSnap == INVALID_HANDLE_VALUE)
 	{
-		_tprintf(_T("Error"));
+		_tprintf(_T("Error ---> CreateToolhelp32Snapshot"));
 		return -1;
 	}
+	procEntry.dwSize = sizeof(PROCESSENTRY32);
+	modEntry.dwSize = sizeof(MODULEENTRY32);
 
-	PROCESSENTRY32 pe;
-	pe.dwSize = sizeof(PROCESSENTRY32);
-
-	BOOL b = Process32First(hSnapshot, &pe);
-	if (!b)
+	if (!Process32First(hProcSnap, &procEntry))
 	{
-		_tprintf(_T("Something went wrong..."));
-		// clean the snapshot object - FROM MSDN so idk if we need this
-		//CloseHandle(hSnapshot);
+		_tprintf(_T("Error ---> Process32First"));
 		return -1;
 	}
-
-	HMODULE hMods[1024];
-	HANDLE hProcess;
-	DWORD cbNeeded;
-	DWORD count = 0;
-	unsigned int i;
-	while (Process32Next(hSnapshot, &pe))
+	
+	while (Process32Next(hProcSnap, &procEntry))
 	{
-		hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pe.th32ProcessID);
-		_tprintf(_T("%d. Потоков: %d, Имя: %s, PID: %d\n"), count++, pe.cntThreads, pe.szExeFile, pe.th32ProcessID);
+		_tprintf(_T("%d. PROCESS %d HAS %s THREAD(-S)\n"), procCount++, procEntry.cntThreads, procEntry.szExeFile);
 
-		// следующие взято с той лабы. вроде работает. 
-		// хотя мельникова говорила делать через Module32First/Module32Next
-		if (EnumProcessModules(hProcess, hMods, sizeof(hMods), &cbNeeded))
+		hModSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, procEntry.th32ProcessID);
+		if (hModSnap == INVALID_HANDLE_VALUE)
 		{
-			for (i = 0; i < (cbNeeded / sizeof(HMODULE)); i++)
-			{
-				TCHAR szModName[MAX_PATH];
-
-				// Get the full path to the module's file.
-				if (GetModuleFileNameEx(hProcess, hMods[i], szModName, sizeof(szModName) / sizeof(TCHAR)))
-				{
-					// Print the module name and handle value.
-					_tprintf(_T("\t%s\n"), szModName);
-				}
-			}
+			//_tprintf(_T("Error ---> CreateToolhelp32Snapshot"));
+			printLine();
+			continue;
 		}
-		_tprintf(_T("\n"));
+		modEntry.dwSize = sizeof(MODULEENTRY32);
+
+		if (!Module32First(hModSnap, &modEntry))
+		{
+			_tprintf(_T("Error"));
+			CloseHandle(hModSnap); // clean the snapshot object
+			continue;
+		}
+		while (Module32Next(hModSnap, &modEntry))
+		{
+			_tprintf(TEXT("%d   %s\n"), modCount++, modEntry.szModule);
+		}
+		modCount = 1;
+		printLine();
 	}
-	CloseHandle(hSnapshot);
+	CloseHandle(hProcSnap);
 	system("pause");
 	return 0;
 }
-
-// doesn't work
-// попытка сделать как говорила Мельникова. не знаю, где библиотеки тут лежат. надо погуглить...
+/*
 int getModuleInfo(DWORD id)
 {
-	MODULEENTRY32 me;
-	HANDLE hModSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, id);
-	HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, id);
-	if (hModSnap == INVALID_HANDLE_VALUE)
+
+
+	// Take a snapshot of all modules in the specified process.
+	hModuleSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, id);
+	if (hModuleSnap == INVALID_HANDLE_VALUE)
 	{
-		_tprintf(_T("Error"));
+		_tprintf(_T("Error ---> CreateToolhelp32Snapshot"));
 		return -1;
 	}
+
+	// Set the size of the structure before using it.
 	me.dwSize = sizeof(MODULEENTRY32);
 
-	BOOL bMod = Module32First(hModSnap, &me);
-	if (!bMod)
+	// Retrieve information about the first module,
+	// and exit if unsuccessful
+	if (!Module32First(hModuleSnap, &me))
 	{
 		_tprintf(_T("Error"));
+		CloseHandle(hModuleSnap); // clean the snapshot object
 		return -1;
 	}
-	while (Module32Next(hModSnap, &me))
+	while (Module32Next(hModuleSnap, &me))
 	{
-		_tprintf(_T("%s \n", me.szModule));
+		_tprintf(TEXT("   MODULE NAME:     %s\n"), me.szModule);
 	}
-	CloseHandle(hModSnap);
 	return 0;
+}*/
+
+void printLine()
+{
+	_tprintf(_T("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"));
 }
