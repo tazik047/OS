@@ -32,7 +32,6 @@ int _tmain(int argc, _TCHAR* argv[])
 		hModSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, procEntry.th32ProcessID);
 		if (hModSnap == INVALID_HANDLE_VALUE)
 		{
-			//_tprintf(_T("Error ---> CreateToolhelp32Snapshot"));
 			printLine();
 			continue;
 		}
@@ -40,8 +39,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		if (!Module32First(hModSnap, &modEntry))
 		{
-			_tprintf(_T("Error"));
-			CloseHandle(hModSnap); // clean the snapshot object
+			_tprintf(_T("Error ---> Module32First"));
 			continue;
 		}
 		while (Module32Next(hModSnap, &modEntry))
@@ -55,36 +53,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	system("pause");
 	return 0;
 }
-/*
-int getModuleInfo(DWORD id)
-{
-
-
-	// Take a snapshot of all modules in the specified process.
-	hModuleSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, id);
-	if (hModuleSnap == INVALID_HANDLE_VALUE)
-	{
-		_tprintf(_T("Error ---> CreateToolhelp32Snapshot"));
-		return -1;
-	}
-
-	// Set the size of the structure before using it.
-	me.dwSize = sizeof(MODULEENTRY32);
-
-	// Retrieve information about the first module,
-	// and exit if unsuccessful
-	if (!Module32First(hModuleSnap, &me))
-	{
-		_tprintf(_T("Error"));
-		CloseHandle(hModuleSnap); // clean the snapshot object
-		return -1;
-	}
-	while (Module32Next(hModuleSnap, &me))
-	{
-		_tprintf(TEXT("   MODULE NAME:     %s\n"), me.szModule);
-	}
-	return 0;
-}*/
 
 void printLine()
 {
