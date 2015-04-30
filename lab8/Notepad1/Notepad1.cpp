@@ -10,7 +10,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	STARTUPINFO si = { 0 }; //сбрасываем все поля | memset(&si, 0, sizeof(STARTUPINFO));
 	PROCESS_INFORMATION pi;
 	si.cb = sizeof(STARTUPINFO);
-	SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
 	TCHAR ProcName[] = _T("Notepad.exe");
 	BOOL b = CreateUnsuspendedProcess(ProcName, &si, &pi, 0);
 	if (!b)

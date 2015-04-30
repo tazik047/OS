@@ -5,11 +5,6 @@
 #include <Windows.h>
 #include <locale.h>
 
-FILETIME creationTime;
-FILETIME lastAccess;
-FILETIME fileWrite;
-FILETIME ft;
-
 BOOL IsUnicode(PBYTE file)
 {
 	return(file[0] == 0xfe && file[1] == 0xff) || (file[0] == 0xff && file[1] == 0xfe);
@@ -41,13 +36,7 @@ void countStrAndLength(T* str, int size)
 void getInformation(TCHAR* fileName) {
 
 	HANDLE h = CreateFile(fileName, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
-	GetFileTime(h, &creationTime, &lastAccess, &fileWrite);
 
-	LONG compTime = CompareFileTime(&fileWrite, &ft);
-	if (compTime != 1) {
-		CloseHandle(h);
-		return;
-	}
 	if (h != INVALID_HANDLE_VALUE)
 	{
 		DWORD dwSize = GetFileSize(h, 0);
@@ -91,18 +80,18 @@ int _tmain(int argc, _TCHAR* argv[])
 	TCHAR buff[MAX_PATH];
 	GetEnvironmentVariable(varName, buff, MAX_PATH);
 	__int64 currentTime = toInt64(buff);
-
+	FILETIME ft;
 	ft.dwLowDateTime = (DWORD)currentTime;
 	ft.dwHighDateTime = (DWORD)(currentTime >> 32);
 	WIN32_FIND_DATA fileData;
 	HANDLE h = FindFirstFile(_T("*.txt"), &fileData);
 	while (h != INVALID_HANDLE_VALUE)
 	{
-		getInformation(fileData.cFileName);
+		if (CompareFileTime(&(fileData.ftCreationTime), &ft)==1)
+			getInformation(fileData.cFileName);
 		if (!FindNextFile(h, &fileData))
 			break;
 	}
 	system("pause");
 	return 0;
 }
-

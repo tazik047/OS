@@ -12,9 +12,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	STARTUPINFO si = { 0 };
 	PROCESS_INFORMATION pi;
 	si.cb = sizeof(STARTUPINFO);
-	SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
 	int c = -1;
-	TCHAR ProcName[] = _T("Notepad1.exe");
+	TCHAR ProcName [] = _T("Notepad1.exe");
 	TCHAR ProcName1[] = _T("Find2.exe");
 	TCHAR ProcName3[] = _T("Info4.exe");
 	BOOL b;
@@ -29,7 +28,6 @@ int _tmain(int argc, _TCHAR* argv[])
 		switch (c)
 		{
 			case 1:
-				SYSTEMTIME st;
 				FILETIME ft;
 				GetSystemTimeAsFileTime(&ft);
 				time = (__int64(ft.dwHighDateTime) << 32) | __int64(ft.dwLowDateTime);
@@ -41,7 +39,7 @@ int _tmain(int argc, _TCHAR* argv[])
 				if (!b) 
 				{
 					_tprintf(_T("Не удалось запустить процесс %s"), ProcName);
-					return 0;
+					return -1;
 				}
 				WaitForSingleObject(pi.hProcess, INFINITE);
 
@@ -50,7 +48,7 @@ int _tmain(int argc, _TCHAR* argv[])
 				if (!b)
 				{
 					_tprintf(_T("Не удалось запустить процесс %s"), ProcName1);
-					return 0;
+					return -1;
 				}
 				WaitForSingleObject(pi.hProcess, INFINITE);				
 				break;
@@ -59,13 +57,11 @@ int _tmain(int argc, _TCHAR* argv[])
 				if (!b)
 				{
 					_tprintf(_T("Не удалось запустить процесс %s"), ProcName3);
-					return 0;
+					return -1;
 				}
 				WaitForSingleObject(pi.hProcess, INFINITE);
 				break;
 		}
 	}
-	CloseHandle(pi.hThread);
-	CloseHandle(pi.hProcess);
 	return 0;
 }

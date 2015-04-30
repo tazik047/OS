@@ -27,7 +27,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 	while (Process32Next(hProcSnap, &procEntry))
 	{
-		_tprintf(_T("%d. PROCESS %s HAS %d THREAD(-S)\n"), procCount++, procEntry.szExeFile, procEntry.cntThreads);
+		_tprintf(_T("%d. PROCESS %s WITH PID %d, HAS %d THREAD(-S)\n"), procCount++, procEntry.szExeFile, procEntry.th32ProcessID, procEntry.cntThreads);
 
 		hModSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, procEntry.th32ProcessID);
 		if (hModSnap == INVALID_HANDLE_VALUE)
@@ -40,7 +40,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		if (!Module32First(hModSnap, &modEntry))
 		{
 			_tprintf(_T("Error ---> Module32First"));
-			continue;
+			return -1;
 		}
 		while (Module32Next(hModSnap, &modEntry))
 		{
