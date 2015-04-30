@@ -44,7 +44,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 		while (Module32Next(hModSnap, &modEntry))
 		{
-			_tprintf(TEXT("%d   %s\n"), modCount++, modEntry.szModule);
+			_tprintf(_T("%d   %s\n"), modCount++, modEntry.szModule);
 		}
 		modCount = 1;
 		printLine();
