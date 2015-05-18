@@ -4,9 +4,12 @@
 
 struct queueStruct{
 	int current;
-	std::string messages[10];
+	TCHAR messages[10][256];
+	BOOL end;
 };
 
-std::string getMessage(queueStruct &queue);
+TCHAR* getMessage(queueStruct&);
 
-BOOL setMessage(queueStruct &queue, std::string message);
+BOOL setMessage(queueStruct&, TCHAR*);
+
+BOOL isEmpty(queueStruct&);
