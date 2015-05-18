@@ -7,6 +7,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Laba9_OS", "Laba9_OS\Laba9_
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Laba9_OS_(5)Cantine", "Laba9_OS_(5)Cantine\Laba9_OS_(5)Cantine.vcxproj", "{D81BDCB8-384B-4D16-A43B-D98587D45BBF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Consumer", "Consumer\Consumer.vcxproj", "{7B8CC237-8033-4000-A031-58F10547CA6B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Main_Cons_Prod", "Main_Cons_Prod\Main_Cons_Prod.vcxproj", "{6420F189-5B5F-4784-9D31-CC24660EA779}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -21,6 +25,14 @@ Global
 		{D81BDCB8-384B-4D16-A43B-D98587D45BBF}.Debug|Win32.Build.0 = Debug|Win32
 		{D81BDCB8-384B-4D16-A43B-D98587D45BBF}.Release|Win32.ActiveCfg = Release|Win32
 		{D81BDCB8-384B-4D16-A43B-D98587D45BBF}.Release|Win32.Build.0 = Release|Win32
+		{7B8CC237-8033-4000-A031-58F10547CA6B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7B8CC237-8033-4000-A031-58F10547CA6B}.Debug|Win32.Build.0 = Debug|Win32
+		{7B8CC237-8033-4000-A031-58F10547CA6B}.Release|Win32.ActiveCfg = Release|Win32
+		{7B8CC237-8033-4000-A031-58F10547CA6B}.Release|Win32.Build.0 = Release|Win32
+		{6420F189-5B5F-4784-9D31-CC24660EA779}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6420F189-5B5F-4784-9D31-CC24660EA779}.Debug|Win32.Build.0 = Debug|Win32
+		{6420F189-5B5F-4784-9D31-CC24660EA779}.Release|Win32.ActiveCfg = Release|Win32
+		{6420F189-5B5F-4784-9D31-CC24660EA779}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
