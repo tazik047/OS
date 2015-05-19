@@ -8,8 +8,10 @@ struct queueStruct{
 	BOOL end;
 };
 
-TCHAR* getMessage(queueStruct&);
+TCHAR* getMessage(queueStruct&, HANDLE);
 
-BOOL setMessage(queueStruct&, TCHAR*);
+BOOL setMessage(queueStruct&, TCHAR*, HANDLE);
 
-BOOL isEmpty(queueStruct&);
+BOOL isEmpty(queueStruct&, HANDLE);
+
+HANDLE start();

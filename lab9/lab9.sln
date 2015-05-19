@@ -9,7 +9,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Laba9_OS_(5)Cantine", "Laba
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Consumer", "Consumer\Consumer.vcxproj", "{7B8CC237-8033-4000-A031-58F10547CA6B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Main_Cons_Prod", "Main_Cons_Prod\Main_Cons_Prod.vcxproj", "{6420F189-5B5F-4784-9D31-CC24660EA779}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Producer", "Producer\Producer.vcxproj", "{F3CB65CB-57FF-47A5-9A1D-8948D13A9605}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Main", "Main\Main.vcxproj", "{9522F74D-0047-498E-AE29-14C058AD7874}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7B8CC237-8033-4000-A031-58F10547CA6B} = {7B8CC237-8033-4000-A031-58F10547CA6B}
+		{F3CB65CB-57FF-47A5-9A1D-8948D13A9605} = {F3CB65CB-57FF-47A5-9A1D-8948D13A9605}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +35,14 @@ Global
 		{7B8CC237-8033-4000-A031-58F10547CA6B}.Debug|Win32.Build.0 = Debug|Win32
 		{7B8CC237-8033-4000-A031-58F10547CA6B}.Release|Win32.ActiveCfg = Release|Win32
 		{7B8CC237-8033-4000-A031-58F10547CA6B}.Release|Win32.Build.0 = Release|Win32
-		{6420F189-5B5F-4784-9D31-CC24660EA779}.Debug|Win32.ActiveCfg = Debug|Win32
-		{6420F189-5B5F-4784-9D31-CC24660EA779}.Debug|Win32.Build.0 = Debug|Win32
-		{6420F189-5B5F-4784-9D31-CC24660EA779}.Release|Win32.ActiveCfg = Release|Win32
-		{6420F189-5B5F-4784-9D31-CC24660EA779}.Release|Win32.Build.0 = Release|Win32
+		{F3CB65CB-57FF-47A5-9A1D-8948D13A9605}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F3CB65CB-57FF-47A5-9A1D-8948D13A9605}.Debug|Win32.Build.0 = Debug|Win32
+		{F3CB65CB-57FF-47A5-9A1D-8948D13A9605}.Release|Win32.ActiveCfg = Release|Win32
+		{F3CB65CB-57FF-47A5-9A1D-8948D13A9605}.Release|Win32.Build.0 = Release|Win32
+		{9522F74D-0047-498E-AE29-14C058AD7874}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9522F74D-0047-498E-AE29-14C058AD7874}.Debug|Win32.Build.0 = Debug|Win32
+		{9522F74D-0047-498E-AE29-14C058AD7874}.Release|Win32.ActiveCfg = Release|Win32
+		{9522F74D-0047-498E-AE29-14C058AD7874}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -11,9 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{6420F189-5B5F-4784-9D31-CC24660EA779}</ProjectGuid>
+    <ProjectGuid>{9522F74D-0047-498E-AE29-14C058AD7874}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Main_Cons_Prod</RootNamespace>
+    <RootNamespace>Main</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -85,7 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Consumer\ConcurrentQueue.cpp" />
-    <ClCompile Include="Main_Cons_Prod.cpp" />
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
