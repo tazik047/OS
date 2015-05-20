@@ -16,6 +16,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	PROCESS_INFORMATION pi;
 	si.cb = sizeof(STARTUPINFO);
 	int c = -1;
+	TCHAR ProcName4[]  = _T("TheFourthTask");
 	TCHAR ProcName51[] = _T("Consumer.exe myMapView");
 	TCHAR ProcName52[] = _T("Producer.exe myMapView");
 	TCHAR temp[256];
@@ -27,11 +28,21 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		system("cls");
 		_tprintf(_T("0. Выйти из программы.\n"));
-		_tprintf(_T("1. -------------\n"));
+		_tprintf(_T("4. Посчитать максимальное количество потоков\n"));
 		_tprintf(_T("5. Запустить производителя и потребителя\n"));
 		_tscanf_s(_T("%d"), &c);
 		switch (c)
 		{
+		case 4:
+			b = CreateUnsuspendedProcess(ProcName4, &si, &pi, 0);
+			if (!b)
+			{
+				_tprintf(_T("Не удалось запустить процесс %s"), ProcName4);
+				return -1;
+			}
+			WaitForSingleObject(pi.hProcess, INFINITE);
+			CloseHandle(pi.hProcess);
+			break;
 		case 5:
 			HANDLE h = CreateFileMapping(INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, sizeof(queueStruct), _T("myMapView"));
 			int i = GetLastError();
@@ -62,7 +73,11 @@ int _tmain(int argc, _TCHAR* argv[])
 			}
 			WaitForMultipleObjects(10, hProducers, TRUE, INFINITE);
 			q->end = TRUE;
+			for (int i = 0; i < 10; i++)
+				CloseHandle(hProducers[i]);
 			WaitForMultipleObjects(5, hConsumer, TRUE, INFINITE);
+			for (int i = 0; i < 5; i++)
+				CloseHandle(hConsumer[i]);
 			end(h, q, mutex);
 			system("pause");
 			break;
