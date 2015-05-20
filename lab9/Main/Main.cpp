@@ -16,6 +16,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	PROCESS_INFORMATION pi;
 	si.cb = sizeof(STARTUPINFO);
 	int c = -1;
+	TCHAR ProcName3[] = _T("Laba9_OS.exe");
 	TCHAR ProcName4[]  = _T("TheFourthTask");
 	TCHAR ProcName51[] = _T("Consumer.exe myMapView");
 	TCHAR ProcName52[] = _T("Producer.exe myMapView");
@@ -28,11 +29,35 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		system("cls");
 		_tprintf(_T("0. Выйти из программы.\n"));
+		_tprintf(_T("2. Запустить 10 поток с записью в файл.\n"));
+		_tprintf(_T("3. Запустить 10 процессов с записью в файл.\n"));
 		_tprintf(_T("4. Посчитать максимальное количество потоков\n"));
 		_tprintf(_T("5. Запустить производителя и потребителя\n"));
 		_tscanf_s(_T("%d"), &c);
 		switch (c)
 		{
+		case 2:
+			_stprintf_s(temp, _T("%s %d"), ProcName3, 1);
+			b = CreateUnsuspendedProcess(temp, &si, &pi, 0);
+			if (!b)
+			{
+				_tprintf(_T("Не удалось запустить процесс %s"), temp);
+				return -1;
+			}
+			WaitForSingleObject(pi.hProcess, INFINITE);
+			CloseHandle(pi.hProcess);
+			break;
+		case 3:
+			_stprintf_s(temp, _T("%s %d"), ProcName3, 2);
+			b = CreateUnsuspendedProcess(temp, &si, &pi, 0);
+			if (!b)
+			{
+				_tprintf(_T("Не удалось запустить процесс %s"), temp);
+				return -1;
+			}
+			WaitForSingleObject(pi.hProcess, INFINITE);
+			CloseHandle(pi.hProcess);
+			break;
 		case 4:
 			b = CreateUnsuspendedProcess(ProcName4, &si, &pi, 0);
 			if (!b)

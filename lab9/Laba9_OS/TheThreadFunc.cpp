@@ -21,7 +21,7 @@ DWORD WINAPI ThreadFunc(LPVOID p) {
 	TCHAR temp[20];
 	_stprintf_s(temp, starts, p);
 	DWORD size = _tcslen(temp)*sizeof(TCHAR);
-	_tprintf(temp);
+	//_tprintf(temp);
 	SetFilePointer(hFileStart, 0, 0, FILE_END);
 	WriteFile(hFileStart, &temp, size, &written, 0);
 	if (written != size){
@@ -53,4 +53,14 @@ DWORD WINAPI ThreadFunc(LPVOID p) {
 	CloseHandle(hMutex);
 	CloseHandle(hMap);
 	return 0;
+}
+
+
+int toInt(TCHAR* str){
+	__int64 res = 0;
+	int i = 0;
+	while (str[i] != '\0'){
+		res = res * 10 + (str[i++] - '0');
+	}
+	return res;
 }

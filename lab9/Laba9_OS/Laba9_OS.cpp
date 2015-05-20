@@ -36,30 +36,34 @@ int _tmain(int argc, _TCHAR* argv[])
 	HANDLE mutex = CreateMutex(0, FALSE, _T("mutex!"));
 	*i = 0;
 	DeleteFile(_T("THREADS.txt"));
-	for (int j = 0; j < 10; j++) {
-		hThread[j] = MyCreateThread(ThreadFunc, (LPVOID)j,  id + j);
+
+	switch (toInt(argv[1])){
+		case 1:
+			for (int j = 0; j < 10; j++) {
+				hThread[j] = MyCreateThread(ThreadFunc, (LPVOID)j, id + j);
+			}
+			break;
+		case 2:
+			for (int j = 0; j < 10; j++) {
+				_stprintf_s(temp, ProcName, j);
+				b = CreateUnsuspendedProcess(temp, &si, &pi, 0);
+				if (!b)
+				{
+					_tprintf(_T("Не удалось запустить процесс %s"), temp);
+					return -1;
+				}
+				hThread[j] = pi.hProcess;
+			}
+			break;
 	}
 
-	/*
-	for (int j = 0; j < 10; j++) {
-		//hThread[j]
-		_stprintf_s(temp, ProcName, j);
-		b = CreateUnsuspendedProcess(temp, &si, &pi, 0);
-		if (!b)
-		{
-			_tprintf(_T("Не удалось запустить процесс %s"), temp);
-			return -1;
-		}
-		hThread[j] = pi.hProcess;
-		//_stprintf_s(temp, _T("%s %d"), hThread[j], j);
-	}*/
-
 	WaitForMultipleObjects(10, hThread, true, INFINITE);
-	
+
 	_tprintf(_T("i = %d\n"), *i);
 	for (int j = 0; j < 10; j++) {
 		CloseHandle(hThread[j]);
 	}
 	CloseHandle(mutex);
+	system("pause");
 	return 0;
 }
