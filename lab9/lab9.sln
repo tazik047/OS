@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Consumer", "Consumer\Consum
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Main_Cons_Prod", "Main_Cons_Prod\Main_Cons_Prod.vcxproj", "{6420F189-5B5F-4784-9D31-CC24660EA779}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DegubWrite", "DegubWrite\DegubWrite.vcxproj", "{A25851D8-16B7-4970-A857-A4EA388C4534}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -33,6 +35,10 @@ Global
 		{6420F189-5B5F-4784-9D31-CC24660EA779}.Debug|Win32.Build.0 = Debug|Win32
 		{6420F189-5B5F-4784-9D31-CC24660EA779}.Release|Win32.ActiveCfg = Release|Win32
 		{6420F189-5B5F-4784-9D31-CC24660EA779}.Release|Win32.Build.0 = Release|Win32
+		{A25851D8-16B7-4970-A857-A4EA388C4534}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A25851D8-16B7-4970-A857-A4EA388C4534}.Debug|Win32.Build.0 = Debug|Win32
+		{A25851D8-16B7-4970-A857-A4EA388C4534}.Release|Win32.ActiveCfg = Release|Win32
+		{A25851D8-16B7-4970-A857-A4EA388C4534}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
