@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Laba9_OS", "Laba9_OS\Laba9_OS.vcxproj", "{5D170CFC-3A63-4464-84C7-BD1505C8DB7A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{ACFBE52A-0C25-4441-96D1-E79AD2B37630} = {ACFBE52A-0C25-4441-96D1-E79AD2B37630}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Laba9_OS_(5)Cantine", "Laba9_OS_(5)Cantine\Laba9_OS_(5)Cantine.vcxproj", "{D81BDCB8-384B-4D16-A43B-D98587D45BBF}"
 EndProject

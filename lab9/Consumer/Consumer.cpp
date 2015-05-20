@@ -25,7 +25,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		}		
 	}
 	end(h, q, mutex);
-	_tprintf(_T("end\n"));
+	_tprintf(_T("end %s\n"),argv[2]);
 	return 0;
 }
 
