@@ -6,10 +6,6 @@ TCHAR path[] = _T("THREADS.txt");
 TCHAR starts[] = _T("starts %d\r\n");
 TCHAR ends[] = _T("ends %d\r\n");
 
-DWORD size = wcslen(starts) * sizeof(TCHAR);
-DWORD size2 = wcslen(ends) * sizeof(TCHAR);
-BOOL fromScratch = true;
-
 DWORD written;
 
 DWORD WINAPI ThreadFunc(LPVOID p) {
@@ -20,22 +16,11 @@ DWORD WINAPI ThreadFunc(LPVOID p) {
 
 #ifdef _DEBUG
 	WaitForSingleObject(hMutex, INFINITE);
-	if (fromScratch) {
-		DeleteFile(path);
-		fromScratch = false;
-	}
 	HANDLE hFileStart = CreateFile(path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE | FILE_SHARE_READ, 0, OPEN_ALWAYS, 0, 0);
-	/*if (fromScratch) { 
-		SetFilePointer(hFileStart, 0, 0, FILE_BEGIN); 
-		_tprintf(_T("first\n"));
-		fromScratch = false; 
-	}
-	else { 
-		//SetFilePointer(hFileStart, 0, 0, FILE_END); 
-	}*/
+
 	TCHAR temp[20];
 	_stprintf_s(temp, starts, p);
-	size = _tcslen(temp)*sizeof(TCHAR);
+	DWORD size = _tcslen(temp)*sizeof(TCHAR);
 	_tprintf(temp);
 	SetFilePointer(hFileStart, 0, 0, FILE_END);
 	WriteFile(hFileStart, &temp, size, &written, 0);
@@ -55,7 +40,7 @@ DWORD WINAPI ThreadFunc(LPVOID p) {
 	HANDLE hFileFinish = CreateFile(path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE|FILE_SHARE_READ, 0, OPEN_ALWAYS, 0, 0);
 	SetFilePointer(hFileFinish, 0, 0, FILE_END);
 	_stprintf_s(temp, ends, p);
-	size2 = _tcslen(temp)*sizeof(TCHAR);
+	DWORD size2 = _tcslen(temp)*sizeof(TCHAR);
 	WriteFile(hFileFinish, &temp, size2, &written, 0);
 	if (written != size2){
 		_tprintf(_T("end-wtite-error\n"));

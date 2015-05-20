@@ -35,12 +35,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	long* i = (long *)MapViewOfFile(hMap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
 	HANDLE mutex = CreateMutex(0, FALSE, _T("mutex!"));
 	*i = 0;
-	//TCHAR temp[5];
-	/*for (int j = 0; j < 10; j++) {
+	DeleteFile(_T("THREADS.txt"));
+	for (int j = 0; j < 10; j++) {
 		hThread[j] = MyCreateThread(ThreadFunc, (LPVOID)j,  id + j);
-	}*/
+	}
 
-	
+	/*
 	for (int j = 0; j < 10; j++) {
 		//hThread[j]
 		_stprintf_s(temp, ProcName, j);
@@ -52,7 +52,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 		hThread[j] = pi.hProcess;
 		//_stprintf_s(temp, _T("%s %d"), hThread[j], j);
-	}
+	}*/
 
 	WaitForMultipleObjects(10, hThread, true, INFINITE);
 	
