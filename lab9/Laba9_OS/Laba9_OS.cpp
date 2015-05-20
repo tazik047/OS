@@ -4,12 +4,14 @@
 #include "stdafx.h"
 #include <windows.h>
 #include "TheThreadFunc.h"
+#include <vector>
+#include <mutex>
 
 #define MyCreateThread(threadFunc, id) CreateThread(0, 0, threadFunc, 0, 0, id);
 
 HANDLE hThread[10];
 DWORD id[10];
-
+/*
 int _tmain(int argc, _TCHAR* argv[])
 {
 #ifdef _DEBUG
@@ -33,7 +35,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 
 	return 0;
-}
+}*/
 
 
 
@@ -91,38 +93,59 @@ void getMyMaxThread() {
 
 void getMaxThread() {
 	DWORD threadID;
-	DWORD retVal;
-	HANDLE* threadHandles;// [MAXIMUM_WAIT_OBJECTS];
+	//DWORD retVal;
+	//HANDLE** threadHandles;// [MAXIMUM_WAIT_OBJECTS];
+
 	int i = 0;
-	int max = 20;
+	int maxThread = 20;
 	while (true) {
-		threadHandles = new HANDLE[max];
+		/*threadHandles = new HANDLE*[maxThread / MAXIMUM_WAIT_OBJECTS];
+		for (int ind = 0; ind <= maxThread / MAXIMUM_WAIT_OBJECTS; ind++)
+		threadHandles[ind] = new HANDLE[MAXIMUM_WAIT_OBJECTS];*/
+		std::vector < std::vector <HANDLE> > threadHandles(maxThread / MAXIMUM_WAIT_OBJECTS + 1, std::vector<HANDLE>(MAXIMUM_WAIT_OBJECTS, NULL));
 		threadCount = 0;
 		mx.lock();
-		for (int ind = 0; ind < max; ind++){
-			threadHandles[ind] = CreateThread(NULL, 0, SleepThread, NULL, 0, &threadID);
+		for (int ind = 0; ind < maxThread; ind++){
+			int ind1 = ind / MAXIMUM_WAIT_OBJECTS;
+			int ind2 = ind%MAXIMUM_WAIT_OBJECTS;
+			threadHandles[ind1][ind2] = CreateThread(NULL, 0, SleepThread, (LPVOID)ind, 0, &threadID);
 		}
 		mx.unlock();
-		WaitForMultipleObjects(max, threadHandles, TRUE, INFINITE);
-		_tprintf(_T("%d\n",threadCount));
-		for (int ind = 0; ind < max; ind++){
-			CloseHandle(threadHandles[ind]);
+		if (maxThread>64)
+			int a = 2;
+		for (int ind = 0; ind < maxThread / MAXIMUM_WAIT_OBJECTS + 1; ind++){
+			HANDLE* t = threadHandles[ind].data();
+			int wait;
+			if (ind == maxThread / MAXIMUM_WAIT_OBJECTS)
+				wait = maxThread % MAXIMUM_WAIT_OBJECTS;
+			else
+				wait = MAXIMUM_WAIT_OBJECTS;
+			WaitForMultipleObjects(wait, t, TRUE, INFINITE);
 		}
-		if (threadCount != max) break;
-		max++;
-		
+		//WaitForMultipleObjects(MAXIMUM_WAIT_OBJECTS, threadHandles[ind].data(), TRUE, INFINITE);
+
+		for (int ind = 0; ind < maxThread; ind++){
+			CloseHandle(threadHandles[ind / MAXIMUM_WAIT_OBJECTS][ind % MAXIMUM_WAIT_OBJECTS]);
+		}
+		_tprintf(_T("max=%d threads=%d\n"), maxThread, threadCount);
+		//system("pause");
+		if (threadCount != maxThread){
+			break;
+		}
+		maxThread += 10;
+
 		//Sleep(50);
 		//i++;
 		//if (i != threadCount) break;
 	}
 
 	_tprintf(_T("end"));
-	int numThreads = MAXIMUM_WAIT_OBJECTS;
-	retVal = WaitForMultipleObjects(i,    // number of threads to wait for 
-		threadHandles, // handles for threads to wait for
-		TRUE,          // wait for all of the threads
-		INFINITE       // wait forever
-		);
+	//int numThreads = MAXIMUM_WAIT_OBJECTS;
+	/*retVal = WaitForMultipleObjects(i,    // number of threads to wait for
+	threadHandles, // handles for threads to wait for
+	TRUE,          // wait for all of the threads
+	INFINITE       // wait forever
+	);*/
 
 	Sleep(1000);
 }
