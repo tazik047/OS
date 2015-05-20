@@ -1,1 +1,1 @@
-Threads: 5
+Threads: 10
