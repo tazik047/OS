@@ -29,7 +29,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	WaitForMultipleObjects(10, hThread, true, INFINITE);
 
-	_tprintf(_T("i = %d\n"), i);
+	_tprintf(_T("i = %d\n"), *i);
 	for (int j = 0; j < 10; j++) {
 		CloseHandle(hThread[j]);
 	}

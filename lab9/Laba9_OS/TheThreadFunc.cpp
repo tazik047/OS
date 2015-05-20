@@ -3,27 +3,39 @@
 
 
 TCHAR path[] = _T("THREADS.txt");
-TCHAR starts[] = _T("starts ");
-TCHAR ends[] = _T("ends ");
-DWORD written;
-DWORD size = 7 * sizeof(TCHAR);//wcslen(starts) / sizeof(TCHAR);
-DWORD size2 = 5 * sizeof(TCHAR);//wcslen(ends) / sizeof(TCHAR);
+TCHAR starts[] = _T("starts\r\n");
+TCHAR ends[] = _T("ends\r\n");
+
+DWORD size = wcslen(starts) * sizeof(TCHAR);//wcslen(starts) / sizeof(TCHAR);
+DWORD size2 = wcslen(ends) * sizeof(TCHAR);//wcslen(ends) / sizeof(TCHAR);
+BOOL fromScratch = true;
 // hFile;
 
 DWORD WINAPI ThreadFunc(LPVOID p) {
 	HANDLE hMutex = CreateMutex(0, FALSE, _T("mutex!"));
 	HANDLE hMap = CreateFileMapping(INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, sizeof(long), _T("CountCall"));
-	HANDLE hFile = CreateFile(path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ, 0, OPEN_ALWAYS, 0, 0);
+	
 	long* i = (long *)MapViewOfFile(hMap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
 
 #ifdef _DEBUG
 	WaitForSingleObject(hMutex, INFINITE);
-	WriteFile(hFile, &starts, size, &written, 0);
+	HANDLE hFileStart = CreateFile(path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE | FILE_SHARE_READ, 0, OPEN_ALWAYS, 0, 0);
+	if (fromScratch) { 
+		SetFilePointer(hFileStart, 0, 0, FILE_BEGIN); 
+		_tprintf(_T("start-write-error\n"));
+		fromScratch = false; 
+	}
+	else { 
+		//SetFilePointer(hFileStart, 0, 0, FILE_END); 
+	}
+	DWORD written;
+	WriteFile(hFileStart, &starts, size, &written, 0);
 	if (written != size){
 		_tprintf(_T("start-write-error\n"));
 		return -1;
 	}
 	ReleaseMutex(hMutex);
+	CloseHandle(hFileStart);
 #endif
 
 	InterlockedIncrement(i);
@@ -31,16 +43,18 @@ DWORD WINAPI ThreadFunc(LPVOID p) {
 	
 #ifdef _DEBUG
 	WaitForSingleObject(hMutex, INFINITE);
-	WriteFile(hFile, &ends, size2, &written, 0);
+	HANDLE hFileFinish = CreateFile(path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE|FILE_SHARE_READ, 0, OPEN_ALWAYS, 0, 0);
+	SetFilePointer(hFileFinish, 0, 0, FILE_END);
+	WriteFile(hFileFinish, &ends, size2, &written, 0);
 	if (written != size2){
 		_tprintf(_T("end-wtite-error\n"));
 		return -1;
 	}
 	ReleaseMutex(hMutex);
-	CloseHandle(hFile);
+	CloseHandle(hFileFinish);
 #endif
 
 	CloseHandle(hMutex);
-	//CloseHandle(hMap);
+	CloseHandle(hMap);
 	return 0;
 }
