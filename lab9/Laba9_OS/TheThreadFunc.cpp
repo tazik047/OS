@@ -20,6 +20,10 @@ DWORD WINAPI ThreadFunc(LPVOID p) {
 
 #ifdef _DEBUG
 	WaitForSingleObject(hMutex, INFINITE);
+	if (fromScratch) {
+		DeleteFile(path);
+		fromScratch = false;
+	}
 	HANDLE hFileStart = CreateFile(path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE | FILE_SHARE_READ, 0, OPEN_ALWAYS, 0, 0);
 	/*if (fromScratch) { 
 		SetFilePointer(hFileStart, 0, 0, FILE_BEGIN); 

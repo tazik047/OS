@@ -70,7 +70,7 @@ void getMaxThread() {
 		}
 		maxThread += 100;
 	}
-	_tprintf(_T("end"));
+	_tprintf(_T("Max Thread count - %d\n"), threadCount);
 }
 
 int _tmain(int argc, _TCHAR* argv[])
