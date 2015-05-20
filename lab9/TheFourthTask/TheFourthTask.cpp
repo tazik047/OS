@@ -52,8 +52,6 @@ void getMaxThread() {
 			threadHandles[ind1][ind2] = CreateThread(NULL, 0, SleepThread, (LPVOID)ind, 0, &threadID);
 		}
 		mx.unlock();
-		if (maxThread>64)
-			int a = 2;
 		for (int ind = 0; ind < maxThread / MAXIMUM_WAIT_OBJECTS + 1; ind++){
 			HANDLE* t = threadHandles[ind].data();
 			int wait;
@@ -70,7 +68,7 @@ void getMaxThread() {
 		if (threadCount != maxThread){
 			break;
 		}
-		maxThread += 10;
+		maxThread += 100;
 	}
 	_tprintf(_T("end"));
 }
