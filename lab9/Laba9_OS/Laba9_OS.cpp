@@ -3,38 +3,71 @@
 
 #include "stdafx.h"
 #include <windows.h>
-#include <mutex>
-#include<vector>
-//#define DEBUG
+#include "TheThreadFunc.h"
+
+#define MyCreateThread(threadFunc, id) CreateThread(0, 0, threadFunc, 0, 0, id);
+
+HANDLE hThread[10];
+DWORD id[10];
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+#ifdef _DEBUG
+	_tprintf(_T("debug\n"));
+#else
+	_tprintf(_T("not debug\n"));
+#endif
+
+	HANDLE hMap = CreateFileMapping(INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, sizeof(long), _T("CountCall"));
+	long* i = (long *)MapViewOfFile(hMap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
+	*i = 0;
+	for (int j = 0; j < 10; j++) {
+		hThread[j] = MyCreateThread(ThreadFunc, id + j);
+	}
+
+	WaitForMultipleObjects(10, hThread, true, INFINITE);
+
+	_tprintf(_T("i = %d\n"), i);
+	for (int j = 0; j < 10; j++) {
+		CloseHandle(hThread[j]);
+	}
+
+	return 0;
+}
+
+
+
+
+
+
 #define CrThreads(lpStartAddress, lpParametr, dwThreadId) CreateThread(NULL,0,lpStartAddress,lpParametr,0,dwThreadId)
 
 int count = 0;
 FILE*  fileHandle;
 DWORD WINAPI tenThreads(LPVOID parametr)
-{
-	count++;
-#ifdef DEBUG
-	fprintf(fileHandle,"Begin thread: %s\n",(char*) parametr);
-#endif
-	for (long i = 0; i < 10000000; i++)
 	{
-
-	}
+		count++;
 #ifdef DEBUG
-	fprintf(fileHandle,"End thread: %s\n",(char*)parametr);
+		fprintf(fileHandle,"Begin thread: %s\n",(char*) parametr);
 #endif
-	return 0;
-}
+		for(long i = 0;i < 10000000;i++)
+		{
+			
+		}
+#ifdef DEBUG
+		fprintf(fileHandle,"End thread: %s\n",(char*)parametr);
+#endif
+		return 0;
+	}
 std::mutex mx;
 int threadCount = 0;
 
 
 unsigned long __stdcall
-SleepThread(void* p)
+SleepThread(void*)
 {
 	mx.lock();
 	threadCount++;
-	//_tprintf(_T("thread%d - %d\n"), p, threadCount);
 	mx.unlock();
 	//while (true);
 	return 0;
@@ -59,46 +92,25 @@ void getMyMaxThread() {
 void getMaxThread() {
 	DWORD threadID;
 	DWORD retVal;
-	//HANDLE** threadHandles;// [MAXIMUM_WAIT_OBJECTS];
-	
+	HANDLE* threadHandles;// [MAXIMUM_WAIT_OBJECTS];
 	int i = 0;
-	int maxThread = 20;
+	int max = 20;
 	while (true) {
-		/*threadHandles = new HANDLE*[maxThread / MAXIMUM_WAIT_OBJECTS];
-		for (int ind = 0; ind <= maxThread / MAXIMUM_WAIT_OBJECTS; ind++)
-			threadHandles[ind] = new HANDLE[MAXIMUM_WAIT_OBJECTS];*/
-		std::vector < std::vector <HANDLE> > threadHandles(maxThread / MAXIMUM_WAIT_OBJECTS + 1,std::vector<HANDLE>(MAXIMUM_WAIT_OBJECTS, NULL));
+		threadHandles = new HANDLE[max];
 		threadCount = 0;
 		mx.lock();
-		for (int ind = 0; ind < maxThread; ind++){
-			int ind1 = ind / MAXIMUM_WAIT_OBJECTS;
-			int ind2 = ind%MAXIMUM_WAIT_OBJECTS;
-			threadHandles[ind1][ind2] = CreateThread(NULL, 0, SleepThread, (LPVOID)ind, 0, &threadID);
+		for (int ind = 0; ind < max; ind++){
+			threadHandles[ind] = CreateThread(NULL, 0, SleepThread, NULL, 0, &threadID);
 		}
 		mx.unlock();
-		if (maxThread>64)
-			int a = 2;
-		for (int ind = 0; ind < maxThread/ MAXIMUM_WAIT_OBJECTS+1; ind++){
-			HANDLE* t = threadHandles[ind].data();
-			int wait;
-			if (ind == maxThread / MAXIMUM_WAIT_OBJECTS)
-				wait = maxThread % MAXIMUM_WAIT_OBJECTS;
-			else
-				wait = MAXIMUM_WAIT_OBJECTS;
-			WaitForMultipleObjects(wait, t, TRUE, INFINITE);
+		WaitForMultipleObjects(max, threadHandles, TRUE, INFINITE);
+		_tprintf(_T("%d\n",threadCount));
+		for (int ind = 0; ind < max; ind++){
+			CloseHandle(threadHandles[ind]);
 		}
-			//WaitForMultipleObjects(MAXIMUM_WAIT_OBJECTS, threadHandles[ind].data(), TRUE, INFINITE);
-
-		for (int ind = 0; ind < maxThread; ind++){
-			CloseHandle(threadHandles[ind / MAXIMUM_WAIT_OBJECTS][ind % MAXIMUM_WAIT_OBJECTS]);
-		}
-		_tprintf(_T("max=%d threads=%d\n"), maxThread, threadCount);
-		//system("pause");
-		if (threadCount != maxThread){
-			break;
-		}
-		maxThread+=10;
-
+		if (threadCount != max) break;
+		max++;
+		
 		//Sleep(50);
 		//i++;
 		//if (i != threadCount) break;
@@ -106,11 +118,11 @@ void getMaxThread() {
 
 	_tprintf(_T("end"));
 	int numThreads = MAXIMUM_WAIT_OBJECTS;
-	/*retVal = WaitForMultipleObjects(i,    // number of threads to wait for
+	retVal = WaitForMultipleObjects(i,    // number of threads to wait for 
 		threadHandles, // handles for threads to wait for
 		TRUE,          // wait for all of the threads
 		INFINITE       // wait forever
-		);*/
+		);
 
 	Sleep(1000);
 }
@@ -122,19 +134,19 @@ int _tmain(int argc, _TCHAR* argv[])
 	DWORD dwThreadId;
 	fileHandle = fopen("file.txt","w");
 	if(fileHandle == NULL)
-	return 1;
+		return 1;
 	for(int i = 0;i < 10;i++)
 	{
-	threadHandles[i] = CrThreads(tenThreads, threads[i], &dwThreadId);
+		threadHandles[i] = CrThreads(tenThreads, threads[i], &dwThreadId);
 	if (!threadHandles[i])
-	{
-	printf ("CreateThread Error\n");
-	continue;
-	}
+		{
+			printf ("CreateThread Error\n");
+			continue;
+		}
 	}
 	WaitForMultipleObjects (10, threadHandles, false, INFINITE);
 	for (int i = 0; i < 10; i++)
-	CloseHandle (threadHandles[i]);
+		CloseHandle (threadHandles[i]);
 	fprintf(fileHandle,"Threads: %d\n",count);
 	fclose(fileHandle);*/
 	getMaxThread();
