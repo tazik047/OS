@@ -15,7 +15,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	STARTUPINFO si = { 0 };
 	PROCESS_INFORMATION pi;
 	si.cb = sizeof(STARTUPINFO);
-	int c = -1;
+	int c = 5;
 	TCHAR ProcName3[] = _T("Laba9_OS.exe");
 	TCHAR ProcName4[]  = _T("TheFourthTask");
 	TCHAR ProcName51[] = _T("Consumer.exe myMapView");
@@ -23,8 +23,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	TCHAR temp[256];
 	BOOL b;
 	queueStruct* q;
-	HANDLE hProducers[10];
-	HANDLE hConsumer[5];
+	const int maxProducer = 10;
+	const int maxConsumer = 5;
+	HANDLE hProducers[maxProducer];
+	HANDLE hConsumer[maxConsumer];
 	while (c != 0)
 	{
 		system("cls");
@@ -76,7 +78,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			queueStruct* q = (queueStruct*)MapViewOfFile(h, FILE_MAP_ALL_ACCESS, 0, 0, 0);
 			HANDLE mutex = start();
 			q->end = FALSE;
-			for (int i = 0; i < 10; i++){
+			for (int i = 0; i < maxProducer; i++){
 				_stprintf_s(temp, _T("%s %d"), ProcName52, i);
 				b = CreateUnsuspendedProcess(temp, &si, &pi, 0);
 				if (!b)
@@ -86,7 +88,7 @@ int _tmain(int argc, _TCHAR* argv[])
 				}
 				hProducers[i] = pi.hProcess;
 			}
-			for (int i = 0; i < 5; i++){
+			for (int i = 0; i < maxConsumer; i++){
 				_stprintf_s(temp, _T("%s %d"), ProcName51, i);
 				b = CreateUnsuspendedProcess(temp, &si, &pi, 0);
 				if (!b)
@@ -96,12 +98,12 @@ int _tmain(int argc, _TCHAR* argv[])
 				}
 				hConsumer[i] = pi.hProcess;
 			}
-			WaitForMultipleObjects(10, hProducers, TRUE, INFINITE);
+			WaitForMultipleObjects(maxProducer, hProducers, TRUE, INFINITE);
 			q->end = TRUE;
-			for (int i = 0; i < 10; i++)
+			for (int i = 0; i < maxProducer; i++)
 				CloseHandle(hProducers[i]);
-			WaitForMultipleObjects(5, hConsumer, TRUE, INFINITE);
-			for (int i = 0; i < 5; i++)
+			WaitForMultipleObjects(maxConsumer, hConsumer, TRUE, INFINITE);
+			for (int i = 0; i < maxConsumer; i++)
 				CloseHandle(hConsumer[i]);
 			end(h, q, mutex);
 			system("pause");

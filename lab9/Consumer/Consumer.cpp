@@ -16,8 +16,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	HANDLE mutex = start();
 	while (!q->end){
 		while (!isEmpty(*q, mutex)) {
-			//_tprintf(_T("\twait\n"));
-			//continue;
 			TCHAR* text = getMessage(*q, mutex);
 			if (text!=NULL)
 				_tprintf(_T("\tread by %s - %s\n"), argv[2], text);
