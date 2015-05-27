@@ -6,18 +6,18 @@ void copy(TCHAR*, TCHAR*);
 
 TCHAR* getMessage(queueStruct &queue, HANDLE mutex)
 {
-	if (isEmpty(queue, mutex)) return 0;
 	WaitForSingleObject(mutex, INFINITE);
+	if (isEmpty(queue, NULL)) 
+	{
+		ReleaseMutex(mutex);
+		return 0;
+	}
 	TCHAR* res = new TCHAR[MAX_MESSAGE];
-	/*_tprintf(_T("sleeeeep\n"));
-	Sleep(1000);
-	_tprintf(_T("wake up\n"));
-	Sleep(1000);*/
 	copy(res, queue.messages[0]);
 	for (int i = 0; i < queue.current; i++)
 		copy(queue.messages[i], queue.messages[i + 1]);
 	queue.current--;
-	ReleaseMutex(mutex);	
+	ReleaseMutex(mutex);
 	return res;
 }
 
@@ -29,16 +29,18 @@ BOOL setMessage(queueStruct &queue, TCHAR* message, HANDLE mutex)
 		return FALSE;
 	}
 	copy(queue.messages[queue.current++], message);
-	ReleaseMutex(mutex);	
+	ReleaseMutex(mutex);
 	return TRUE;
 }
 
 BOOL isEmpty(queueStruct &queue, HANDLE mutex)
 {
 	int count;
-	WaitForSingleObject(mutex, INFINITE);
+	if (mutex != NULL)
+		WaitForSingleObject(mutex, INFINITE);
 	count = queue.current;
-	ReleaseMutex(mutex);	
+	if (mutex != NULL)
+		ReleaseMutex(mutex);
 	return count == 0;
 }
 
@@ -55,7 +57,7 @@ HANDLE start()
 {
 	TCHAR name[] = _T("mutex_lab");
 	HANDLE h = OpenMutex(0, FALSE, name);
-	if (h==0)
+	if (h == 0)
 		return CreateMutex(0, FALSE, name);
 	return h;
 }
