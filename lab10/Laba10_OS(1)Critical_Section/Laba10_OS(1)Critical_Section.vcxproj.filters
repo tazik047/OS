@@ -29,7 +29,7 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Laba10_OS(1)Critical_Section.cpp">
+    <ClCompile Include="ReadWrite.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

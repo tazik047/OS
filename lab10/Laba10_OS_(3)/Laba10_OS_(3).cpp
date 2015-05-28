@@ -3,11 +3,20 @@
 
 #include "stdafx.h"
 #include <Windows.h>
+#include<string>
 
 #define CreateUnsuspendedProcess(path, lpsi, lppi) CreateProcess(0, path, 0, 0, 0, 0, 0, 0, lpsi, lppi);
 #define count 5
 
 TCHAR ProcName[] = _T("ReadWrite.exe");
+
+#define MAX_SIZE 10000
+
+struct threadStruct{
+	int Count;
+	char messages[MAX_SIZE][256];
+	int length;
+};
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -17,9 +26,17 @@ int _tmain(int argc, _TCHAR* argv[])
 	HANDLE hTimer = NULL;
 	LARGE_INTEGER liDueTime;
 
-	liDueTime.QuadPart = -50000000LL;
-
-	for (int i = 0; i < count; i++) {
+	liDueTime.QuadPart = -10000000LL;
+	HANDLE map = CreateFileMapping(INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, sizeof(threadStruct), _T("myMapView"));
+	int i = GetLastError();
+	if (map == 0)
+		return GetLastError();
+	threadStruct* q = (threadStruct*)MapViewOfFile(map, FILE_MAP_ALL_ACCESS, 0, 0, 0);
+	HANDLE mutex = CreateMutex(0, FALSE, _T("counterLock"));
+	for (int i = 0; i < count; i++) {	
+		WaitForSingleObject(mutex, INFINITE);
+		q->Count += 2;
+		ReleaseMutex(mutex);
 		CreateUnsuspendedProcess(ProcName, &si, &pi);
 		hTimer = CreateWaitableTimer(NULL, TRUE, NULL);
 		if (NULL == hTimer)

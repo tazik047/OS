@@ -8,18 +8,12 @@
 #define WaitInf(obj) WaitForSingleObject(obj, INFINITE);
 #define min 100
 #define max 500
-#define count 2
+#define count 5
 
 const unsigned int PHILOSOPHERS_NUMBER = 5;
-CRITICAL_SECTION cs;
 
 HANDLE semaphore;
 HANDLE forks[PHILOSOPHERS_NUMBER];
-
-struct PhilWithForks {
-	int phil;
-	HANDLE forks[2];
-};
 
 void wait()
 {
@@ -83,6 +77,6 @@ int _tmain(int argc, _TCHAR* argv[])
 		phils[i] = MyCreateThread(dining, (LPVOID)i);
 	}
 	WaitForMultipleObjects(PHILOSOPHERS_NUMBER, phils, true, INFINITE);
-
+	system("pause");
 	return 0;
 }
