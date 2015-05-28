@@ -5,115 +5,82 @@
 #include <Windows.h>
 
 #define MyCreateThread(threadFunc, value) CreateThread(0, 0, threadFunc, value, 0, 0);
+#define WaitInf(obj) WaitForSingleObject(obj, INFINITE);
 #define min 100
 #define max 500
-#define count 4
+#define count 2
 
 const unsigned int PHILOSOPHERS_NUMBER = 5;
 CRITICAL_SECTION cs;
+
+HANDLE semaphore;
+HANDLE forks[PHILOSOPHERS_NUMBER];
 
 struct PhilWithForks {
 	int phil;
 	HANDLE forks[2];
 };
 
-void hungry(int num) {
-	EnterCriticalSection(&cs);
-	_tprintf(_T("Philosopher %d is hungry.\n"), num);
-	LeaveCriticalSection(&cs);
+void wait()
+{
+	Sleep(min + rand() % (max - min));
 }
 
 void eating(int num, int left, int right) {
-	EnterCriticalSection(&cs);
 	_tprintf(_T("Philosopher %d starts eating with %d and %d forks.\n"), num, left, right);
-	LeaveCriticalSection(&cs);
+	wait();
+}
+
+void takes(int num, int ind){
+	_tprintf(_T("Phil %d takes %d fork\n"), num, ind);
+}
+
+void puts(int num, int ind){
+	_tprintf(_T("Phil %d puts %d fork\n"), num, ind);
 }
 
 void thinking(int num) {
-	EnterCriticalSection(&cs);
 	_tprintf(_T("Philosopher %d starts thinking.\n"), num);
-	LeaveCriticalSection(&cs);
+	wait();
 }
 
 DWORD WINAPI dining(LPVOID p) {
-	PhilWithForks *philWithForks = static_cast<PhilWithForks*>(p);
-
-	for (unsigned int i = 0; i < PHILOSOPHERS_NUMBER; i++) {
-		SetEvent(philWithForks->forks[i]);
-	}
-
-	for (int i = 0; i < count; i++) {
-		Sleep(min + rand() % (max - min));
-		hungry(philWithForks->phil);
-		/*
-		//WaitForMultipleObjects(2, philWithForks->forks, true, INFINITE);
-		WaitForSingleObject(philWithForks->forks[0], INFINITE);
-		EnterCriticalSection(&cs);
-		ResetEvent(philWithForks->forks[0]);
-		_tprintf(_T("Philosopher %d takes %d folk.\n"), i, i);
-		//LeaveCriticalSection(&cs);
-
-		WaitForSingleObject(philWithForks->forks[1], INFINITE);
-		//EnterCriticalSection(&cs);
-		ResetEvent(philWithForks->forks[1]);
-		_tprintf(_T("Philosopher %d takes %d folk.\n"), i, i+1);
-		LeaveCriticalSection(&cs);
-
-		eating(philWithForks->phil, philWithForks->phil, philWithForks->phil + 1);
-		Sleep(min + rand() % (max - min));
-
-		//EnterCriticalSection(&cs);
-		SetEvent(philWithForks->forks[0]);
-		SetEvent(philWithForks->forks[1]);
-		//LeaveCriticalSection(&cs);
-		*/
-
-		//чужой код
-
-		//вот тут - что ждем, что нет
-		// нужно поочередно брать левую (i) и правую (i+1) вилки
-		// set/reset лучше погуглить, посмотреть что за что отвечает. я не уверена	
-		DWORD res = WaitForMultipleObjects(2, philWithForks->forks, true, 1);
-
-		if (res != WAIT_OBJECT_0) {
-			ResetEvent(philWithForks->forks[0]);
-			ResetEvent(philWithForks->forks[1]);
-
-			Sleep(min + rand() % (max - min));
-			SetEvent(philWithForks->forks[0]);
-			SetEvent(philWithForks->forks[1]);
-		}
-		Sleep(min + rand() % (max - min));
-
-		thinking(philWithForks->phil); 
+	int index = (int)p;
+	int lf = index;
+	int rf = (index + 1) % PHILOSOPHERS_NUMBER;
+	for (int i = 0; i < count; i++)
+	{
+		thinking(index);
+		WaitInf(semaphore);
+		WaitInf(forks[lf]);
+		takes(index, lf);
+		WaitInf(forks[rf]);
+		takes(index, rf);
+		eating(index, lf, rf);
+		puts(index, rf);
+		ReleaseMutex(forks[rf]);
+		puts(index, lf);
+		ReleaseMutex(forks[lf]);
+		long* prev = NULL;
+		ReleaseSemaphore(semaphore, 1, 0);
 	}
 	return 0;
 }
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	PhilWithForks philWithForks[PHILOSOPHERS_NUMBER];
-	HANDLE forks[PHILOSOPHERS_NUMBER];
+	semaphore = CreateSemaphore(0, PHILOSOPHERS_NUMBER - 1, PHILOSOPHERS_NUMBER - 1, NULL);
 	HANDLE phils[PHILOSOPHERS_NUMBER];
-	InitializeCriticalSection(&cs);
 
 	for (unsigned int i = 0; i < PHILOSOPHERS_NUMBER; i++) {
-		forks[i] = CreateEvent(0, true, false, NULL);
+		forks[i] = CreateMutex(0, false, NULL);
 		if (forks[i] == 0) {
 			_tprintf(_T("Error.\n"));
 		}
 	}
 
 	for (unsigned int i = 0; i < PHILOSOPHERS_NUMBER; i++) {
-		philWithForks[i].phil = i;
-		philWithForks[i].forks[0] = forks[i];
-
-		if (i < 4)
-			philWithForks[i].forks[1] = forks[i + 1];
-		else
-			philWithForks[i].forks[1] = forks[0];
-
-		phils[i] = MyCreateThread(dining, &philWithForks[i]);
+		phils[i] = MyCreateThread(dining, (LPVOID)i);
 	}
 	WaitForMultipleObjects(PHILOSOPHERS_NUMBER, phils, true, INFINITE);
 

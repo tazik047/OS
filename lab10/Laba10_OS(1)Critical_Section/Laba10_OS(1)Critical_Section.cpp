@@ -7,8 +7,8 @@
 #include <string>
 #include <mutex>
 
-#define readerLength 6
-#define writerLength 6
+#define readerLength 2
+#define writerLength 2
 
 HANDLE r, w, mutex1, mutex2;
 int countReaders = 0;
@@ -24,7 +24,7 @@ DWORD WINAPI writer(LPVOID parametr)//новости записываются в вектор
 {
 	std::string s((char*)parametr);
 	s = "\t" + s;
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 5; i++)
 	{
 		WaitForSingleObject(mutex2, INFINITE);
 			countWriter++;
